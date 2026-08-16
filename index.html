@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026年藍鵲露營車兩天一夜導覽，抓住暑假的尾巴！</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f4f7f4;
+            color: #2d3748;
+        }
+        .bg-forest {
+            background-color: #1e3f2d;
+        }
+        .text-forest {
+            color: #1e3f2d;
+        }
+        .border-forest {
+            border-color: #1e3f2d;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        .tab-btn.active {
+            background-color: #1e3f2d;
+            color: #ffffff;
+            font-weight: bold;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .checkbox-custom:checked + .item-label {
+            text-decoration: line-through;
+            color: #94a3b8;
+        }
+        .badge-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="pb-16 antialiased">
+
+    <!-- Header / Hero Section -->
+    <header class="relative bg-forest text-white py-12 md:py-16 px-4 shadow-xl overflow-hidden">
+        <div class="absolute inset-0 opacity-30">
+            <img src="image/露營車照_2.jpg" alt="藍鵲露營車全景" class="w-full h-full object-cover">
+        </div>
+        <div class="relative max-w-4xl mx-auto text-center space-y-4">
+            <span class="inline-block bg-amber-500 text-stone-900 font-bold px-4 py-1 rounded-full text-xs md:text-sm tracking-wide shadow-md">
+                🏕️ 夏日終極篇 • 親子露營車之旅
+            </span>
+            <h1 class="text-3xl md:text-5xl font-black tracking-tight leading-tight drop-shadow-md">
+                抓住暑假的尾巴！<br>藍鵲露營車兩天一夜
+            </h1>
+            <p class="text-amber-200 text-sm md:text-base font-medium drop-shadow">
+                📅 預計日期：8/21（五）- 8/22（六） | 📍 苗栗通霄 藍鵲渡假莊園
+            </p>
+            
+            <!-- Quick Info Badges -->
+            <div class="flex flex-wrap justify-center gap-2.5 pt-2 text-xs md:text-sm">
+                <span class="bg-black/40 backdrop-blur border border-white/20 px-3 py-1.5 rounded-lg shadow-sm">
+                    <i class="fa-solid fa-caravan mr-1 text-amber-300"></i> 房型：星空城堡-露營車
+                </span>
+                <span class="bg-black/40 backdrop-blur border border-white/20 px-3 py-1.5 rounded-lg shadow-sm">
+                    <i class="fa-solid fa-id-badge mr-1 text-amber-300"></i> 報到姓名：林佳儀
+                </span>
+                <span class="bg-black/40 backdrop-blur border border-white/20 px-3 py-1.5 rounded-lg shadow-sm">
+                    <i class="fa-solid fa-users mr-1 text-amber-300"></i> 陣容：6 大 3 小 (星家/周家/萬家)
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Navigation Bar -->
+    <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-stone-200 shadow-sm">
+        <div class="max-w-4xl mx-auto flex overflow-x-auto no-scrollbar justify-start sm:justify-around p-2 text-xs sm:text-sm font-medium text-stone-600 gap-1 sm:gap-2">
+            <button onclick="switchTab('info')" id="tab-info" class="tab-btn active shrink-0 px-3 py-2 rounded-lg transition-all">
+                <i class="fa-solid fa-circle-info mr-1"></i> 行前概覽
+            </button>
+            <button onclick="switchTab('schedule')" id="tab-schedule" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
+                <i class="fa-solid fa-calendar-days mr-1"></i> 行程安排
+            </button>
+            <button onclick="switchTab('menu')" id="tab-menu" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
+                <i class="fa-solid fa-utensils mr-1"></i> 晚餐 Menu
+            </button>
+            <button onclick="switchTab('personal')" id="tab-personal" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
+                <i class="fa-solid fa-suitcase-rolling mr-1"></i> 個人用品
+            </button>
+            <button onclick="switchTab('foodlist')" id="tab-foodlist" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
+                <i class="fa-solid fa-basket-shopping mr-1"></i> 食材清單
+            </button>
+            <button onclick="switchTab('gearlist')" id="tab-gearlist" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
+                <i class="fa-solid fa-campground mr-1"></i> 營地裝備
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="max-w-4xl mx-auto px-4 pt-6">
+
+        <!-- TAB 1: 行前概覽 (INFO) -->
+        <section id="sec-info" class="space-y-6">
+            
+            <!-- Location & Facilities Highlight Card -->
+            <div class="glass-card rounded-2xl p-6 border border-stone-200 shadow-sm relative overflow-hidden">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-stone-100 pb-4 mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 rounded-2xl bg-forest text-white flex items-center justify-center font-bold text-xl shadow-md">
+                            <i class="fa-solid fa-map-location-dot"></i>
+                        </div>
+                        <div>
+                            <span class="badge-pill bg-emerald-100 text-emerald-800 mb-1">入園報名字：林佳儀（12:00後可入園）</span>
+                            <h3 class="font-black text-xl text-forest">苗栗通霄 • 藍鵲渡假莊園</h3>
+                        </div>
+                    </div>
+                    <a href="https://maps.app.goo.gl/iEHWTxZxiRxtAK8Z9?g_st=ic" target="_blank" 
+                       class="inline-flex items-center justify-center bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-all shadow-sm">
+                        <i class="fa-solid fa-diamond-turn-right mr-2"></i> 開啟 Google 地圖導航
+                    </a>
+                </div>
+
+                <!-- Facilities Badges Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs mb-4">
+                    <div class="bg-teal-50 border border-teal-100 text-teal-900 p-3 rounded-xl">
+                        <div class="font-bold text-sm mb-0.5"><i class="fa-solid fa-person-swimming text-teal-600 mr-1"></i> 戲水池</div>
+                        <div class="text-stone-500">消暑大水池，備泳衣</div>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-100 text-amber-900 p-3 rounded-xl">
+                        <div class="font-bold text-sm mb-0.5"><i class="fa-solid fa-umbrella-beach text-amber-600 mr-1"></i> 大沙坑區</div>
+                        <div class="text-stone-500">自備玩沙工具盡情玩</div>
+                    </div>
+                    <div class="bg-indigo-50 border border-indigo-100 text-indigo-900 p-3 rounded-xl">
+                        <div class="font-bold text-sm mb-0.5"><i class="fa-solid fa-icons text-indigo-600 mr-1"></i> 遊戲攀爬區</div>
+                        <div class="text-stone-500">盪鞦韆、攀爬溜滑梯</div>
+                    </div>
+                    <div class="bg-rose-50 border border-rose-100 text-rose-900 p-3 rounded-xl">
+                        <div class="font-bold text-sm mb-0.5"><i class="fa-solid fa-utensils text-rose-600 mr-1"></i> 莊園早餐</div>
+                        <div class="text-stone-500">08:00~09:30 供應</div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2 text-xs text-stone-600 pt-2 border-t border-stone-100">
+                    <a href="https://bmr.bluemagpie.com.tw/" target="_blank" class="hover:text-emerald-700 underline"><i class="fa-solid fa-globe mr-1"></i>藍鵲莊園官網</a>
+                    <span class="text-stone-300">|</span>
+                    <a href="https://bmr.bluemagpie.com.tw/camping_5.php" target="_blank" class="hover:text-emerald-700 underline"><i class="fa-solid fa-caravan mr-1"></i>星空城堡露營車房型介紹</a>
+                </div>
+            </div>
+
+            <!-- Map & Venue Section -->
+            <div class="bg-white rounded-2xl p-6 border border-stone-200 shadow-sm space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-lg text-forest flex items-center">
+                        <i class="fa-solid fa-map text-emerald-600 mr-2"></i> 園區地圖 & 露營車位置指引
+                    </h3>
+                    <span class="text-xs bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full font-bold">星空城堡．雨備場</span>
+                </div>
+                <div class="rounded-xl overflow-hidden border border-stone-200 shadow-inner bg-stone-100">
+                    <img src="image/園區地圖_2.jpg" alt="藍鵲渡假莊園地圖" class="w-full h-auto object-contain max-h-[480px] mx-auto">
+                </div>
+                
+                <p class="text-xs text-stone-500"><i class="fa-solid fa-circle-info mr-1 text-emerald-600"></i>入園後沿車道往內直行至最下方「星空城堡．雨備場」旁停車場即可抵達我們的露營車與活動大平台。</p>
+            </div>
+
+            <!-- Campsite Real Scene & Facilities -->
+            <div class="bg-white rounded-2xl p-6 border border-stone-200 shadow-sm">
+                <h3 class="font-bold text-lg text-forest mb-4 flex items-center">
+                    <i class="fa-solid fa-images text-teal-600 mr-2"></i> 營區實景與公共設備
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <div class="rounded-xl overflow-hidden border border-stone-200 shadow-sm h-52 bg-stone-100">
+                            <img src="image/用餐區_2.jpg" alt="專屬遮陽用餐平台" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                        </div>
+                        <div class="text-xs text-stone-700 font-bold flex items-center">
+                            <i class="fa-solid fa-campground text-amber-600 mr-1.5"></i> 露營車前專屬遮陽木棧平台（附大木桌椅、洗手槽、照明串燈）
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="rounded-xl overflow-hidden border border-stone-200 shadow-sm h-52 bg-stone-100">
+                            <img src="image/飲水機與冷藏_2.jpg" alt="雨備場公共冷藏冰箱與飲水機" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                        </div>
+                        <div class="text-xs text-stone-700 font-bold flex items-center">
+                            <i class="fa-solid fa-faucet-detergent text-blue-600 mr-1.5"></i> 雨備場公共大冷藏冰箱（無冷凍）＆ 溫熱飲水機
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accommodation & Room Amenities -->
+            <div class="bg-white rounded-2xl p-6 border border-stone-200 shadow-sm">
+                <h3 class="font-bold text-lg text-forest mb-4 flex items-center">
+                    <i class="fa-solid fa-house-chimney-window text-amber-500 mr-2"></i> 露營車房內設施
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                    <div class="p-3 bg-stone-50 rounded-xl border border-stone-100 flex items-center space-x-2.5">
+                        <i class="fa-solid fa-snowflake text-blue-500 text-xl"></i>
+                        <div>
+                            <div class="font-bold text-stone-800">車內小冰箱</div>
+                            <div class="text-xs text-stone-500">微涼冷藏（大食材放雨備公用冰箱）</div>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-stone-50 rounded-xl border border-stone-100 flex items-center space-x-2.5">
+                        <i class="fa-solid fa-wind text-teal-500 text-xl"></i>
+                        <div>
+                            <div class="font-bold text-stone-800">冷暖氣空調</div>
+                            <div class="text-xs text-stone-500">獨立舒適溫控</div>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-stone-50 rounded-xl border border-stone-100 flex items-center space-x-2.5">
+                        <i class="fa-solid fa-shower text-emerald-500 text-xl"></i>
+                        <div>
+                            <div class="font-bold text-stone-800">獨立衛浴與備品</div>
+                            <div class="text-xs text-stone-500">沐浴乳/洗髮精/大浴巾</div>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-stone-50 rounded-xl border border-stone-100 flex items-center space-x-2.5">
+                        <i class="fa-solid fa-baby-carriage text-pink-500 text-xl"></i>
+                        <div>
+                            <div class="font-bold text-stone-800">折疊澡盆</div>
+                            <div class="text-xs text-stone-500">各家露營車均備乙個</div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-xs text-stone-500 mt-3"><i class="fa-solid fa-circle-info mr-1 text-stone-400"></i>其他車內設施：電視、Free Wi-Fi、電熱煮水壺、吹風機、礦泉水、茶包與咖啡包。</p>
+            </div>
+
+            <!-- Campsite Rules & Policies Summary -->
+            <div class="bg-white rounded-2xl p-6 border border-stone-200 shadow-sm space-y-4">
+                <div class="flex items-center justify-between border-b pb-3">
+                    <h3 class="font-bold text-lg text-rose-900 flex items-center">
+                        <i class="fa-solid fa-clipboard-list text-rose-600 mr-2"></i> 莊園住宿須知 & 重要守則
+                    </h3>
+                    <span class="text-xs bg-rose-100 text-rose-800 font-bold px-2.5 py-1 rounded-full">務必詳閱</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-stone-700">
+                    <div class="p-3 bg-stone-50 rounded-xl border border-stone-100">
+                        <span class="font-bold text-stone-900"><i class="fa-solid fa-clock text-amber-600 mr-1.5"></i>進退房時間：</span>
+                        15:00 後入住，翌日 11:00 前退房（逾時收費 $1,000/hr）。
+                    </div>
+                    <div class="p-3 bg-stone-50 rounded-xl border border-stone-100">
+                        <span class="font-bold text-stone-900"><i class="fa-solid fa-wifi text-blue-600 mr-1.5"></i>莊園 Wi-Fi：</span>
+                        名稱 <code class="bg-stone-200 px-1 rounded">BMRF 開頭</code> / 密碼 <code class="bg-stone-200 px-1 rounded">037782883</code>。
+                    </div>
+                    <div class="p-3 bg-stone-50 rounded-xl border border-stone-100">
+                        <span class="font-bold text-stone-900"><i class="fa-solid fa-volume-xmark text-purple-600 mr-1.5"></i>安靜與門禁：</span>
+                        清晨 08:00 前及夜間 22:00 後請勿喧嘩；園區門禁時間為 22:00 ~ 07:00。
+                    </div>
+                    <div class="p-3 bg-stone-50 rounded-xl border border-stone-100">
+                        <span class="font-bold text-stone-900"><i class="fa-solid fa-plug-circle-xmark text-rose-600 mr-1.5"></i>用電限制：</span>
+                        禁止使用高耗電電器（電鍋、電磁爐、烤箱、電暖器等）以免跳電。
+                    </div>
+                    <div class="p-3 bg-stone-50 rounded-xl border border-stone-100">
+                        <span class="font-bold text-stone-900"><i class="fa-solid fa-fire-flame-curved text-amber-600 mr-1.5"></i>明火規範：</span>
+                        草地上禁止直接生火/野炊；如需烤肉需使用離地 30cm 以上高腳架。
+                    </div>
+                    <div class="p-3 bg-stone-50 rounded-xl border border-stone-100">
+                        <span class="font-bold text-stone-900"><i class="fa-solid fa-ban-smoking text-rose-600 mr-1.5"></i>車內禁令：</span>
+                        車內全面禁菸、禁酒酗、禁打麻將、禁帶寵物、嚴禁炊煮食物與懸掛濕衣物。
+                    </div>
+                </div>
+
+                <!-- Accordion for Rule Screenshots -->
+                <details class="bg-stone-50 rounded-xl border border-stone-200 p-3 text-xs">
+                    <summary class="font-bold text-stone-700 cursor-pointer hover:text-emerald-700 flex items-center justify-between select-none">
+                        <span><i class="fa-solid fa-file-invoice mr-1 text-stone-500"></i> 點此查看官方規定原文截圖 (3張)</span>
+                        <span class="text-stone-400 font-normal">展開 / 收合</span>
+                    </summary>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-3 mt-2 border-t border-stone-200">
+                        <a href="image/規定_2.jpg" target="_blank" class="block rounded-lg overflow-hidden border hover:opacity-90">
+                            <img src="image/規定_2.jpg" alt="住宿規定 1" class="w-full h-auto">
+                        </a>
+                        <a href="image/規定2_2.jpg" target="_blank" class="block rounded-lg overflow-hidden border hover:opacity-90">
+                            <img src="image/規定2_2.jpg" alt="住宿規定 2" class="w-full h-auto">
+                        </a>
+                        <a href="image/規定3_2.jpg" target="_blank" class="block rounded-lg overflow-hidden border hover:opacity-90">
+                            <img src="image/規定3_2.jpg" alt="退費規範 3" class="w-full h-auto">
+                        </a>
+                    </div>
+                </details>
+            </div>
+
+            <!-- Self-provided Reminders -->
+            <div class="bg-amber-50/80 border-2 border-amber-300 rounded-2xl p-5 shadow-sm">
+                <h3 class="font-bold text-base text-amber-950 mb-3 flex items-center">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-600 mr-2 text-lg"></i> 提醒自備物品 Check（草皮樹多，防蚊防曬要做好）
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5 text-xs text-amber-950 font-medium">
+                    <div class="bg-white/90 p-2.5 rounded-lg border border-amber-200 text-center shadow-2xs">🦟 防蚊液 (勤補)</div>
+                    <div class="bg-white/90 p-2.5 rounded-lg border border-amber-200 text-center shadow-2xs">🩹 止癢藥膏</div>
+                    <div class="bg-white/90 p-2.5 rounded-lg border border-amber-200 text-center shadow-2xs">🔌 雷達寶寶電蚊香</div>
+                    <div class="bg-white/90 p-2.5 rounded-lg border border-amber-200 text-center shadow-2xs">🪥 個人牙刷牙膏</div>
+                    <div class="bg-white/90 p-2.5 rounded-lg border border-amber-200 text-center shadow-2xs">🩴 拖鞋 (大/小必備)</div>
+                    <div class="bg-white/90 p-2.5 rounded-lg border border-amber-200 text-center shadow-2xs">💨 隨身電風扇</div>
+                    <div class="bg-white/90 p-2.5 rounded-lg border border-amber-200 text-center shadow-2xs">🩱 泳衣 (大人可便服)</div>
+                    <div class="bg-white/90 p-2.5 rounded-lg border border-amber-200 text-center shadow-2xs">🏖️ 玩沙玩具</div>
+                    <div class="bg-white/90 p-2.5 rounded-lg border border-amber-200 text-center shadow-2xs">🍽️ 個人碗盤餐具杯子</div>
+                    <div class="bg-white/90 p-2.5 rounded-lg border border-amber-200 text-center shadow-2xs">🕶️ 墨鏡 & 防曬乳</div>
+                </div>
+            </div>
+<div class="rounded-xl overflow-hidden border border-stone-200 shadow-inner bg-stone-100">
+                    <img src="image/露營車照.jpg" alt="藍鵲渡假莊園地圖" class="w-full h-auto object-contain max-h-[480px] mx-auto">
+                </div>
+        </section>
+
+        <!-- TAB 2: 行程安排 (SCHEDULE) -->
+        <section id="sec-schedule" class="hidden space-y-6">
+            
+            <!-- Day 1 Schedule -->
+            <div class="bg-white rounded-2xl p-6 border border-stone-200 shadow-sm relative">
+                <div class="flex justify-between items-center border-b pb-3 mb-4">
+                    <h3 class="font-extrabold text-xl md:text-2xl text-forest flex items-center">
+                        <span class="bg-forest text-white text-xs md:text-sm px-3 py-1 rounded-lg mr-2">DAY 1</span>
+                        8/21（五）露營啟程 & 水上狂歡
+                    </h3>
+                    <span class="text-xs bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full font-bold">報到：林佳儀</span>
+                </div>
+
+                <div class="space-y-6 relative before:absolute before:inset-0 before:left-3.5 before:w-0.5 before:bg-emerald-200">
+                    
+                    <div class="relative pl-8">
+                        <div class="absolute left-0 top-1.5 w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold ring-4 ring-white">12</div>
+                        <div class="bg-stone-50 p-4 rounded-xl border border-stone-200">
+                            <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">12:00 後</span>
+                            <h4 class="font-bold text-base text-stone-800 mt-1">提前入園，開始玩耍！</h4>
+                            <p class="text-xs sm:text-sm text-stone-600 mt-1">推薦提早進園區認識環境，先攻玩沙區、遊戲區攀爬溜滑梯與盪鞦韆！</p>
+                        </div>
+                    </div>
+
+                    <div class="relative pl-8">
+                        <div class="absolute left-0 top-1.5 w-7 h-7 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs font-bold ring-4 ring-white">15</div>
+                        <div class="bg-stone-50 p-4 rounded-xl border border-stone-200">
+                            <span class="text-xs font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">15:00</span>
+                            <h4 class="font-bold text-base text-stone-800 mt-1">露營車前集合領鑰匙 🔑</h4>
+                            <p class="text-xs sm:text-sm text-stone-600 mt-1">萬媽 Bella 會統一領取鑰匙並做發放，進車放行李略作整頓。</p>
+                        </div>
+                    </div>
+
+                    <div class="relative pl-8">
+                        <div class="absolute left-0 top-1.5 w-7 h-7 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold ring-4 ring-white">15</div>
+                        <div class="bg-blue-50/80 p-4 rounded-xl border border-blue-200">
+                            <span class="text-xs font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded">15:40</span>
+                            <h4 class="font-bold text-base text-blue-950 mt-1">游泳池消暑 Go! 🏊‍♂️</h4>
+                            <p class="text-xs sm:text-sm text-blue-800 mt-1">換上泳衣，玩水池消暑，小朋友瘋狂放電時間！</p>
+                        </div>
+                    </div>
+
+                    <div class="relative pl-8">
+                        <div class="absolute left-0 top-1.5 w-7 h-7 rounded-full bg-rose-500 text-white flex items-center justify-center text-xs font-bold ring-4 ring-white">17</div>
+                        <div class="bg-rose-50/80 p-4 rounded-xl border border-rose-200">
+                            <span class="text-xs font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded">17:00 ~ 18:00</span>
+                            <h4 class="font-bold text-base text-rose-950 mt-1">百萬爸媽伙食兵開工 👨‍🍳 ➔ 盛宴開動 🥩</h4>
+                            <p class="text-xs sm:text-sm text-rose-900 mt-1">雙爐齊發！韓式辣烤肉、蝦鬆、鮭魚炒飯，陸續上桌！</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Day 2 Schedule -->
+            <div class="bg-white rounded-2xl p-6 border border-stone-200 shadow-sm relative">
+                <div class="flex justify-between items-center border-b pb-3 mb-4">
+                    <h3 class="font-extrabold text-xl md:text-2xl text-forest flex items-center">
+                        <span class="bg-forest text-white text-xs md:text-sm px-3 py-1 rounded-lg mr-2">DAY 2</span>
+                        8/22（六）晨間暢玩 & 桐花村美味客家饗宴
+                    </h3>
+                </div>
+
+                <div class="space-y-6 relative before:absolute before:inset-0 before:left-3.5 before:w-0.5 before:bg-emerald-200">
+                    
+                    <div class="relative pl-8">
+                        <div class="absolute left-0 top-1.5 w-7 h-7 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs font-bold ring-4 ring-white">08</div>
+                        <div class="bg-stone-50 p-4 rounded-xl border border-stone-200">
+                            <span class="text-xs font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">08:00 - 09:30</span>
+                            <h4 class="font-bold text-base text-stone-800 mt-1">莊園早餐時間 🥐 & 繼續玩水/玩沙</h4>
+                            <p class="text-xs sm:text-sm text-stone-600 mt-1">享用園區早餐，抓緊退房前時間，繼續在園區內玩耍嬉戲。</p>
+                        </div>
+                    </div>
+
+                    <div class="relative pl-8">
+                        <div class="absolute left-0 top-1.5 w-7 h-7 rounded-full bg-rose-500 text-white flex items-center justify-center text-xs font-bold ring-4 ring-white">11</div>
+                        <div class="bg-stone-50 p-4 rounded-xl border border-stone-200">
+                            <span class="text-xs font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded">11:00</span>
+                            <h4 class="font-bold text-base text-stone-800 mt-1">辦理退房 🔑 & 溫馨大合照 📷</h4>
+                            <p class="text-xs sm:text-sm text-stone-600 mt-1">統一將鑰匙交給 Bella 辦理退房，大家在營地拍大合照留念！</p>
+                        </div>
+                    </div>
+
+                    <div class="relative pl-8">
+                        <div class="absolute left-0 top-1.5 w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold ring-4 ring-white">11</div>
+                        <div class="bg-emerald-50/80 p-4 rounded-xl border border-emerald-200">
+                            <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">11:00 - 11:30</span>
+                            <h4 class="font-bold text-base text-emerald-950 mt-1">草皮放風 & 避暑遊樂室球池 ⚽</h4>
+                            <p class="text-xs sm:text-sm text-emerald-800 mt-1">在大草皮搭帳棚玩耍，或前往園區室內遊戲室球池，吹冷氣避開正中午高溫。</p>
+                        </div>
+                    </div>
+
+                    <div class="relative pl-8">
+                        <div class="absolute left-0 top-1.5 w-7 h-7 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs font-bold ring-4 ring-white">12</div>
+                        <div class="bg-purple-50/80 p-4 rounded-xl border border-purple-200">
+                            <span class="text-xs font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded">12:00 - 13:30</span>
+                            <h4 class="font-bold text-base text-purple-950 mt-1">桐花村 三義客家料理 饕客午餐 🥢</h4>
+                            <p class="text-xs sm:text-sm text-purple-900 mt-1">
+                                莊園車程約 25 分鐘（訂位 6 大 4 小）。享受客家美食（客家小炒、鹹豬肉、燜筍）為旅程畫下完美句點！
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+        <!-- TAB 3: 晚餐 MENU & 分工 (MENU) -->
+        <section id="sec-menu" class="hidden space-y-6">
+            
+            <div class="bg-white rounded-2xl p-6 border border-stone-200 shadow-sm">
+                <div class="text-center border-b pb-4 mb-6">
+                    <span class="text-xs bg-amber-100 text-amber-800 font-bold px-3 py-1 rounded-full">8/21 藍鵲露營晚餐 Menu</span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-forest mt-2">⛺ 百萬露營吃粗飽大餐 🥩</h2>
+                    <p class="text-xs text-stone-500 mt-1">奶油鮭魚炒飯 × 生菜包肉 × 涼爽氣泡特調</p>
+                </div>
+
+                <!-- Dining Atmosphere Photo -->
+                <div class="mb-6 rounded-2xl overflow-hidden border border-stone-200 shadow-sm relative group">
+                    <img src="image/菜單.png" alt="菜單" class="w-full object-cover group-hover:scale-90 transition-transform duration-500">
+                    <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-3 text-white text-xs md:text-sm flex items-center">
+                        <i class="fa-solid fa-heart text-rose-400 mr-2"></i> 自由取用，歡迎自行增添想吃的食材
+                    </div>
+                </div>
+
+                <!-- Menu Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    
+                    <!-- Beverages & Kids Main -->
+                    <div class="space-y-4">
+                        <div class="bg-amber-50/70 p-4 rounded-xl border border-amber-200">
+                            <h3 class="font-bold text-amber-900 text-base border-b border-amber-200 pb-2 mb-2 flex items-center">
+                                <i class="fa-solid fa-glass-water text-amber-600 mr-2"></i> 涼爽特調與飲品
+                            </h3>
+                            <ul class="space-y-2 text-xs sm:text-sm text-stone-700">
+                                <li class="font-bold text-emerald-900">🍹 自調現打氣泡飲 <span class="text-xs font-normal text-stone-500">(檸檬 / 百香果 / 蜂蜜) [萬家準備氣泡水機]</span></li>
+                                <li>🥛 保久乳 6 罐 <span class="text-xs text-stone-500">(小朋友飲用 / 搭配仙草) [星家準備]</span></li>
+                                <li>🧃 蘋果汁 1 瓶 <span class="text-xs text-stone-500">[星家準備]</span></li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-orange-50/70 p-4 rounded-xl border border-orange-200">
+                            <h3 class="font-bold text-orange-900 text-base border-b border-orange-200 pb-2 mb-2 flex items-center">
+                                <i class="fa-solid fa-child text-orange-600 mr-2"></i> 小朋友主食 (Kids Special)
+                            </h3>
+                            <ul class="space-y-2 text-xs sm:text-sm text-stone-700">
+                                <li class="font-bold text-orange-950">🍳 奶油鮭魚炒飯 (6人份) <span class="text-xs font-normal text-stone-500">(鮭魚 + 花椰菜 + 玉米)</span></li>
+                                <li class="font-bold text-orange-950">🍕 迷你小披薩 (10個) <span class="text-xs font-normal text-stone-500">(吐司 + 蘑菇 + 鳳梨 + 蘋果)</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Adults Special & Desserts -->
+                    <div class="space-y-4">
+                        <div class="bg-rose-50/70 p-4 rounded-xl border border-rose-200">
+                            <h3 class="font-bold text-rose-900 text-base border-b border-rose-200 pb-2 mb-2 flex items-center">
+                                <i class="fa-solid fa-drumstick-bite text-rose-600 mr-2"></i> 大人限定 🥬 生菜包肉奢華饗宴
+                            </h3>
+                            <ul class="space-y-2 text-xs sm:text-sm text-stone-700">
+                                <li class="font-bold text-rose-950">🔥 韓式烤肉 (辣味)</li>
+                                <li class="font-bold text-rose-950">🦐 檸檬蘋果蝦鬆 <span>(萬爸特製食譜!)</span></li>
+                                <li>🥒 涼拌小黃瓜 (含蒜頭) & 涼拌金針豆芽菜</li>
+                                <li>🥬 韓式泡菜 & 美生菜 1 顆</li>
+                                <li>🍚 白飯 (3人份)</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-teal-50/70 p-4 rounded-xl border border-teal-200">
+                            <h3 class="font-bold text-teal-900 text-base border-b border-teal-200 pb-2 mb-2 flex items-center">
+                                <i class="fa-solid fa-ice-cream text-teal-600 mr-2"></i> 甜點與當季水果
+                            </h3>
+                            <ul class="space-y-2 text-xs sm:text-sm text-stone-700">
+                                <li>🥣 黑糖仙草 <span class="text-xs text-stone-500">(搭配保久乳 / 黑糖水)</span></li>
+                                <li>🍉 任意當季水果數樣 <span class="text-xs text-stone-500">[周家準備]</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Family Task Allocation Cards -->
+                <div class="mt-6 border-t border-stone-200 pt-6">
+                    <h3 class="font-bold text-base text-forest mb-3 text-center">📋 各家分配與準備項目</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="p-3.5 bg-emerald-50 rounded-xl border border-emerald-200 text-sm">
+                            <div class="font-bold text-emerald-900 mb-1">萬家準備</div>
+                            <ul class="text-xs text-emerald-800 space-y-1">
+                                <li>• 氣泡水機 1 台</li>
+                                <li>• 紙碗 1 串 / 紙杯 1 串</li>
+                            </ul>
+                        </div>
+                        <div class="p-3.5 bg-blue-50 rounded-xl border border-blue-200 text-sm">
+                            <div class="font-bold text-blue-900 mb-1">星家準備</div>
+                            <ul class="text-xs text-blue-800 space-y-1">
+                                <li>• 保久乳 6 罐</li>
+                                <li>• 蘋果汁 1 瓶</li>
+                                <li>• 卡式爐 1 臺</li>
+                            </ul>
+                        </div>
+                        <div class="p-3.5 bg-purple-50 rounded-xl border border-purple-200 text-sm">
+                            <div class="font-bold text-purple-900 mb-1">周家準備</div>
+                            <ul class="text-xs text-purple-800 space-y-1">
+                                <li>• 當季水果任意數樣</li>
+                                <li>• 小朋友零食餅乾</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p class="text-xs text-center text-stone-500 mt-3">* 提醒：大家請自備個人餐具、泡麵、喜歡的酒類與宵夜零食喔！</p>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- TAB 4: 個人用品 CHECKLIST (PERSONAL) -->
+        <section id="sec-personal" class="hidden space-y-6">
+            
+            <!-- Progress Bar & Actions Header -->
+            <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-bold text-forest text-base sm:text-lg">🧳 個人用品打包清單</span>
+                            <span id="personal-progress-percent" class="font-bold text-emerald-600 text-lg">0%</span>
+                        </div>
+                        <p class="text-xs text-stone-500">可自由點擊文字編輯、按「+」新增項目或刪除，資料會自動儲存！</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="openAddItemModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-1.5 rounded-xl text-xs sm:text-sm flex items-center shadow-sm transition-all">
+                            <i class="fa-solid fa-plus mr-1.5"></i> 新增項目
+                        </button>
+                        <button onclick="resetPersonalItems()" title="重設為預設清單" class="bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold px-2.5 py-1.5 rounded-xl text-xs transition-all border border-stone-200">
+                            <i class="fa-solid fa-rotate-left"></i> 重設
+                        </button>
+                    </div>
+                </div>
+                <div class="w-full bg-stone-200 h-3 rounded-full overflow-hidden">
+                    <div id="personal-progress-bar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Dynamic Categories Container -->
+            <div id="personal-items-container" class="space-y-6">
+                <!-- Javascript will dynamically render category cards here -->
+            </div>
+
+        </section>
+
+        <!-- TAB 5: 食材與餐食 CHECKLIST (FOODLIST) -->
+        <section id="sec-foodlist" class="hidden space-y-6">
+            
+            <!-- Progress Bar -->
+            <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="font-bold text-forest">🍱 食材準備進度 (Food Progress)</span>
+                    <span id="food-progress-percent" class="font-bold text-emerald-600 text-lg">0%</span>
+                </div>
+                <div class="w-full bg-stone-200 h-3 rounded-full overflow-hidden">
+                    <div id="food-progress-bar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Cold Storage -->
+            <div class="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-base sm:text-lg text-forest flex items-center">
+                        <i class="fa-solid fa-snowflake text-blue-500 mr-2"></i> 冷藏 / 保冷袋分區 (需低溫控溫)
+                    </h3>
+                    <span class="badge-pill bg-blue-100 text-blue-800">11 項</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs sm:text-sm text-left">
+                        <thead class="bg-stone-100 text-stone-600 font-bold">
+                            <tr>
+                                <th class="p-2.5 rounded-l-lg">勾選</th>
+                                <th class="p-2.5">類別</th>
+                                <th class="p-2.5">菜單/食材名稱</th>
+                                <th class="p-2.5">份量/容器</th>
+                                <th class="p-2.5">盛盤</th>
+                                <th class="p-2.5 rounded-r-lg">前置處理與備註</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-stone-100">
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="f1" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-amber-100 text-amber-800">飲品</span></td>
+                                <td class="p-2.5 font-bold"><label for="f1" class="cursor-pointer">百香果冰角</label></td>
+                                <td class="p-2.5 text-stone-600">數個 / -</td>
+                                <td class="p-2.5 text-stone-400">-</td>
+                                <td class="p-2.5 text-stone-600">保冷袋打包（冷凍攜帶）</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="f2" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-amber-100 text-amber-800">飲品</span></td>
+                                <td class="p-2.5 font-bold"><label for="f2" class="cursor-pointer">檸檬冰角</label></td>
+                                <td class="p-2.5 text-stone-600">數個 / -</td>
+                                <td class="p-2.5 text-stone-400">-</td>
+                                <td class="p-2.5 text-stone-600">保冷袋打包（冷凍攜帶）</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="f3" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-amber-100 text-amber-800">飲品</span></td>
+                                <td class="p-2.5 font-bold"><label for="f3" class="cursor-pointer">濃縮糖水</label></td>
+                                <td class="p-2.5 text-stone-600">分裝少許 / 小寶特瓶</td>
+                                <td class="p-2.5 text-stone-400">-</td>
+                                <td class="p-2.5 text-stone-600">仙草調味用，保冷袋打包</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="f4" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-amber-100 text-amber-800">飲品</span></td>
+                                <td class="p-2.5 font-bold text-blue-700"><label for="f4" class="cursor-pointer">食用冰塊</label></td>
+                                <td class="p-2.5 text-stone-600">1 包 / -</td>
+                                <td class="p-2.5 text-stone-400">-</td>
+                                <td class="p-2.5 text-stone-600 font-bold text-amber-700">當天上營地前全聯採買，保冷袋打包</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="f5" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">甜品</span></td>
+                                <td class="p-2.5 font-bold text-blue-700"><label for="f5" class="cursor-pointer">仙草</label></td>
+                                <td class="p-2.5 text-stone-600">1 份 / -</td>
+                                <td class="p-2.5 text-stone-400">-</td>
+                                <td class="p-2.5 text-stone-600 font-bold text-amber-700">當天上營地前全聯採買，保冷袋打包</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="f6" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-rose-100 text-rose-800">大人主食</span></td>
+                                <td class="p-2.5 font-bold"><label for="f6" class="cursor-pointer">醃小黃瓜</label></td>
+                                <td class="p-2.5 text-stone-600">1 盒 / 小正方保鮮盒</td>
+                                <td class="p-2.5 text-stone-400">-</td>
+                                <td class="p-2.5 text-stone-600">前一天 D-1 醃漬冷藏</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="f7" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-rose-100 text-rose-800">大人主食</span></td>
+                                <td class="p-2.5 font-bold"><label for="f7" class="cursor-pointer">醃豆芽菜金針菇</label></td>
+                                <td class="p-2.5 text-stone-600">1 盒 / 小正方保鮮盒</td>
+                                <td class="p-2.5 text-stone-400">-</td>
+                                <td class="p-2.5 text-stone-600">前一天 D-1 醃漬冷藏</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="f8" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-rose-100 text-rose-800">大人主食</span></td>
+                                <td class="p-2.5 font-bold text-rose-700"><label for="f8" class="cursor-pointer">韓式烤肉（辣）</label></td>
+                                <td class="p-2.5 text-stone-600">6 條 / 大長方保鮮盒</td>
+                                <td class="p-2.5 text-stone-800 font-medium">大盤 1</td>
+                                <td class="p-2.5 text-stone-600">前一天 D-1 醃肉冷凍；現場退冰現煎</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="f9" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-rose-100 text-rose-800">大人主食</span></td>
+                                <td class="p-2.5 font-bold"><label for="f9" class="cursor-pointer">白飯</label></td>
+                                <td class="p-2.5 text-stone-600">3 人份 / 大保鮮袋</td>
+                                <td class="p-2.5 text-stone-800 font-medium">大盤 2</td>
+                                <td class="p-2.5 text-stone-600">前一天 D-1 煮熟冷藏分裝</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="f10" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-rose-100 text-rose-800">大人主食</span></td>
+                                <td class="p-2.5 font-bold"><label for="f10" class="cursor-pointer">泡菜</label></td>
+                                <td class="p-2.5 text-stone-600">1 罐 / 原裝</td>
+                                <td class="p-2.5 text-stone-800 font-medium">小碗 1</td>
+                                <td class="p-2.5 text-stone-600 font-bold text-amber-700">當天上營地前全聯採買</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="f11" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-rose-100 text-rose-800">大人主食</span></td>
+                                <td class="p-2.5 font-bold text-rose-700"><label for="f11" class="cursor-pointer">蝦鬆 (萬爸特製)</label></td>
+                                <td class="p-2.5 text-stone-600">1 份 / 中長方保鮮盒</td>
+                                <td class="p-2.5 text-stone-800 font-medium">中盤 1</td>
+                                <td class="p-2.5 text-stone-600">前一天 D-1 預炒料理冷藏</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="f12" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-orange-100 text-orange-800">小孩主食</span></td>
+                                <td class="p-2.5 font-bold text-orange-700"><label for="f12" class="cursor-pointer">奶油鮭魚炒飯</label></td>
+                                <td class="p-2.5 text-stone-600">6 人份 / 大保鮮袋</td>
+                                <td class="p-2.5 text-stone-800 font-medium">大盤 4</td>
+                                <td class="p-2.5 text-stone-600">前一天 D-1 預先炒好冷藏，現場翻炒回溫</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="f13" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-orange-100 text-orange-800">小孩主食</span></td>
+                                <td class="p-2.5 font-bold text-orange-700"><label for="f13" class="cursor-pointer">迷你披薩</label></td>
+                                <td class="p-2.5 text-stone-600">10 個 / 大保鮮袋</td>
+                                <td class="p-2.5 text-stone-800 font-medium">大盤 5</td>
+                                <td class="p-2.5 text-stone-600">前一天 D-1 製作/分裝，現場煎烤加熱</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Ambient Dry Goods -->
+            <div class="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-base sm:text-lg text-forest flex items-center">
+                        <i class="fa-solid fa-box-open text-amber-500 mr-2"></i> 常溫裝箱分區 (乾貨、調味與耗材)
+                    </h3>
+                    <span class="badge-pill bg-amber-100 text-amber-800">10 項</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs sm:text-sm text-left">
+                        <thead class="bg-stone-100 text-stone-600 font-bold">
+                            <tr>
+                                <th class="p-2.5 rounded-l-lg">勾選</th>
+                                <th class="p-2.5">類別</th>
+                                <th class="p-2.5">菜單/項目名稱</th>
+                                <th class="p-2.5">份量/容器</th>
+                                <th class="p-2.5">盛盤</th>
+                                <th class="p-2.5 rounded-r-lg">前置處理與備註</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-stone-100">
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="f15" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-amber-100 text-amber-800">飲品</span></td>
+                                <td class="p-2.5 font-bold"><label for="f15" class="cursor-pointer">蜂蜜</label></td>
+                                <td class="p-2.5 text-stone-600">分裝少許 / 小寶特瓶</td>
+                                <td class="p-2.5 text-stone-400">-</td>
+                                <td class="p-2.5 text-stone-600">前一天 D-1分裝，搭配冰角特調用</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="f16" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-amber-100 text-amber-800">飲品</span></td>
+                                <td class="p-2.5 font-bold"><label for="f16" class="cursor-pointer">可爾必思濃縮</label></td>
+                                <td class="p-2.5 text-stone-600">1 瓶 / 原瓶裝</td>
+                                <td class="p-2.5 text-stone-400">-</td>
+                                <td class="p-2.5 text-stone-600">常溫攜帶，飲品調製基底</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="f17" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-amber-100 text-amber-800">飲品</span></td>
+                                <td class="p-2.5 font-bold"><label for="f17" class="cursor-pointer">飲料壺</label></td>
+                                <td class="p-2.5 text-stone-600">1 個 / -</td>
+                                <td class="p-2.5 text-stone-400">-</td>
+                                <td class="p-2.5 text-stone-600">特調飲品/氣泡水混調盛裝用</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="f18" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-emerald-100 text-emerald-800">大人主食</span></td>
+                                <td class="p-2.5 font-bold text-emerald-800"><label for="f18" class="cursor-pointer">美生菜</label></td>
+                                <td class="p-2.5 text-stone-600">1 顆 / 大保鮮袋</td>
+                                <td class="p-2.5 text-stone-800 font-medium">大盤 3</td>
+                                <td class="p-2.5 text-stone-600 font-medium">前一天 D-1洗淨瀝乾，鋪紙巾吸水保持爽脆</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="f19" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">調味料</span></td>
+                                <td class="p-2.5 font-bold"><label for="f19" class="cursor-pointer">鹽</label></td>
+                                <td class="p-2.5 text-stone-600">少許 / 小醬料盒</td>
+                                <td class="p-2.5 text-stone-400">-</td>
+                                <td class="p-2.5 text-stone-600">炒飯與食材現場調味備用</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="f20" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">調味料</span></td>
+                                <td class="p-2.5 font-bold"><label for="f20" class="cursor-pointer">胡椒</label></td>
+                                <td class="p-2.5 text-stone-600">少許 / 小醬料盒</td>
+                                <td class="p-2.5 text-stone-400">-</td>
+                                <td class="p-2.5 text-stone-600">煎烤肉類與食材調味備用</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="f21" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">調味料</span></td>
+                                <td class="p-2.5 font-bold"><label for="f21" class="cursor-pointer">香料粉</label></td>
+                                <td class="p-2.5 text-stone-600">少許 / 小醬料盒</td>
+                                <td class="p-2.5 text-stone-400">-</td>
+                                <td class="p-2.5 text-stone-600">烤肉/披薩/炒飯增添風味</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="f22" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">調味料</span></td>
+                                <td class="p-2.5 font-bold"><label for="f22" class="cursor-pointer">黑糖</label></td>
+                                <td class="p-2.5 text-stone-600">1 份 / 小分裝袋</td>
+                                <td class="p-2.5 text-stone-400">-</td>
+                                <td class="p-2.5 text-stone-600">甜品/仙草調味備用</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- TAB 6: 營地裝備與用品 CHECKLIST (GEARLIST) -->
+        <section id="sec-gearlist" class="hidden space-y-6">
+            
+            <!-- Progress Bar -->
+            <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="font-bold text-forest">⛺ 營地裝備進度 (Gear Progress)</span>
+                    <span id="gear-progress-percent" class="font-bold text-emerald-600 text-lg">0%</span>
+                </div>
+                <div class="w-full bg-stone-200 h-3 rounded-full overflow-hidden">
+                    <div id="gear-progress-bar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Cooking Gear & Tableware -->
+            <div class="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-base sm:text-lg text-forest flex items-center">
+                        <i class="fa-solid fa-fire-burner text-rose-500 mr-2"></i> 烹調器具 & 餐具用品
+                    </h3>
+                    <span class="badge-pill bg-rose-100 text-rose-800">12 項</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs sm:text-sm text-left">
+                        <thead class="bg-stone-100 text-stone-600 font-bold">
+                            <tr>
+                                <th class="p-2.5 rounded-l-lg">勾選</th>
+                                <th class="p-2.5">類別</th>
+                                <th class="p-2.5">裝備項目名稱</th>
+                                <th class="p-2.5">數量</th>
+                                <th class="p-2.5 rounded-r-lg">規格 / 檢核重點</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-stone-100">
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g1" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-orange-100 text-orange-800">烹調器具</span></td>
+                                <td class="p-2.5 font-bold"><label for="g1" class="cursor-pointer">氣泡水機 + 氣瓶</label></td>
+                                <td class="p-2.5 text-stone-600">1 組</td>
+                                <td class="p-2.5 text-stone-600">含冷藏專用水瓶</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g2" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-orange-100 text-orange-800">烹調器具</span></td>
+                                <td class="p-2.5 font-bold text-rose-700"><label for="g2" class="cursor-pointer">卡式爐</label></td>
+                                <td class="p-2.5 text-stone-600">2 爐</td>
+                                <td class="p-2.5 text-stone-600">出發前確認點火正常與爐頭清潔 (星家帶1臺)</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g3" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-orange-100 text-orange-800">烹調器具</span></td>
+                                <td class="p-2.5 font-bold text-rose-700"><label for="g3" class="cursor-pointer">瓦斯罐</label></td>
+                                <td class="p-2.5 text-stone-600">3 罐</td>
+                                <td class="p-2.5 text-stone-600 font-bold text-emerald-700">當天上營地前全聯採買</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g4" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-orange-100 text-orange-800">烹調器具</span></td>
+                                <td class="p-2.5 font-bold"><label for="g4" class="cursor-pointer">炒鍋</label></td>
+                                <td class="p-2.5 text-stone-600">1 個</td>
+                                <td class="p-2.5 text-stone-600">搭配奶油鮭魚炒飯翻炒回溫</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g5" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-orange-100 text-orange-800">烹調器具</span></td>
+                                <td class="p-2.5 font-bold"><label for="g5" class="cursor-pointer">煎烤盤</label></td>
+                                <td class="p-2.5 text-stone-600">1 個</td>
+                                <td class="p-2.5 text-stone-600">韓式烤肉專用烤盤</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g6" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">餐具用品</span></td>
+                                <td class="p-2.5 font-bold"><label for="g6" class="cursor-pointer">紙杯</label></td>
+                                <td class="p-2.5 text-stone-600">1 串</td>
+                                <td class="p-2.5 text-stone-600">特調冷飲與熱飲備用免洗杯 (萬家準備)</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g7" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">餐具用品</span></td>
+                                <td class="p-2.5 font-bold"><label for="g7" class="cursor-pointer">紙碗</label></td>
+                                <td class="p-2.5 text-stone-600">1 串</td>
+                                <td class="p-2.5 text-stone-600">主食與湯品分裝免洗碗 (萬家準備)</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g8" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">餐具用品</span></td>
+                                <td class="p-2.5 font-bold"><label for="g8" class="cursor-pointer">吸管</label></td>
+                                <td class="p-2.5 text-stone-600">數個</td>
+                                <td class="p-2.5 text-stone-600">飲品特調使用</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g9" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">餐具用品</span></td>
+                                <td class="p-2.5 font-bold"><label for="g9" class="cursor-pointer">免洗筷</label></td>
+                                <td class="p-2.5 text-stone-600">數個</td>
+                                <td class="p-2.5 text-stone-600">用餐備用餐具</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g10" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">餐具用品</span></td>
+                                <td class="p-2.5 font-bold"><label for="g10" class="cursor-pointer">大人筷子</label></td>
+                                <td class="p-2.5 text-stone-600">2 個</td>
+                                <td class="p-2.5 text-stone-600">自用環保餐具</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g11" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">餐具用品</span></td>
+                                <td class="p-2.5 font-bold"><label for="g11" class="cursor-pointer">兒童餐具</label></td>
+                                <td class="p-2.5 text-stone-600">1 個</td>
+                                <td class="p-2.5 text-stone-600">小朋友專用匙叉</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g12" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">餐具用品</span></td>
+                                <td class="p-2.5 font-bold"><label for="g12" class="cursor-pointer">兒童餐盤</label></td>
+                                <td class="p-2.5 text-stone-600">1 個</td>
+                                <td class="p-2.5 text-stone-600">小朋友專用分裝盤</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Kitchen Tools & Campsite Gear -->
+            <div class="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-base sm:text-lg text-forest flex items-center">
+                        <i class="fa-solid fa-utensils text-emerald-600 mr-2"></i> 廚房工具 & 營地生活裝備
+                    </h3>
+                    <span class="badge-pill bg-emerald-100 text-emerald-800">14 項</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs sm:text-sm text-left">
+                        <thead class="bg-stone-100 text-stone-600 font-bold">
+                            <tr>
+                                <th class="p-2.5 rounded-l-lg">勾選</th>
+                                <th class="p-2.5">類別</th>
+                                <th class="p-2.5">裝備項目名稱</th>
+                                <th class="p-2.5">數量</th>
+                                <th class="p-2.5 rounded-r-lg">規格 / 檢核重點</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-stone-100">
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g13" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
+                                <td class="p-2.5 font-bold"><label for="g13" class="cursor-pointer">鍋鏟</label></td>
+                                <td class="p-2.5 text-stone-600">2 個</td>
+                                <td class="p-2.5 text-stone-600">分別搭配炒鍋與煎烤盤使用</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g14" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
+                                <td class="p-2.5 font-bold text-rose-700">生肉夾 (大)</td>
+                                <td class="p-2.5 text-stone-600">1 個</td>
+                                <td class="p-2.5 text-stone-600">(生食用)大夾子，生熟分流嚴防污染</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g15" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
+                                <td class="p-2.5 font-bold text-emerald-700">熟食小夾子</td>
+                                <td class="p-2.5 text-stone-600">2 個</td>
+                                <td class="p-2.5 text-stone-600">(熟食用)小夾子，熟食分菜取食專用</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g16" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
+                                <td class="p-2.5 font-bold"><label for="g16" class="cursor-pointer">大湯匙</label></td>
+                                <td class="p-2.5 text-stone-600">1 個</td>
+                                <td class="p-2.5 text-stone-600">湯品 / 仙草盛裝分裝專用</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g17" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
+                                <td class="p-2.5 font-bold"><label for="g17" class="cursor-pointer">湯匙</label></td>
+                                <td class="p-2.5 text-stone-600">4 個</td>
+                                <td class="p-2.5 text-stone-600">料理試味與備用湯匙</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g18" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
+                                <td class="p-2.5 font-bold"><label for="g18" class="cursor-pointer">料理剪刀</label></td>
+                                <td class="p-2.5 text-stone-600">1 個</td>
+                                <td class="p-2.5 text-stone-600">烤肉剪塊 / 食材修剪必備</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g19" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
+                                <td class="p-2.5 font-bold"><label for="g19" class="cursor-pointer">托盤</label></td>
+                                <td class="p-2.5 text-stone-600">1 個</td>
+                                <td class="p-2.5 text-stone-600">食材出盤與盛裝上桌專用</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g20" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
+                                <td class="p-2.5 font-bold"><label for="g20" class="cursor-pointer">鐵鍋盆</label></td>
+                                <td class="p-2.5 text-stone-600">1 個</td>
+                                <td class="p-2.5 text-stone-600">洗菜、備料、盛裝備用</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g21" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
+                                <td class="p-2.5 font-bold"><label for="g21" class="cursor-pointer">噴油罐</label></td>
+                                <td class="p-2.5 text-stone-600">1 個</td>
+                                <td class="p-2.5 text-stone-600">煎烤盤防黏均勻噴油使用</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g27" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
+                                <td class="p-2.5 font-bold"><label for="g27" class="cursor-pointer">廚房紙巾</label></td>
+                                <td class="p-2.5 text-stone-600">1 捲</td>
+                                <td class="p-2.5 text-stone-600">生菜吸水、煎烤擦拭油污、料理台清潔</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g22" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-indigo-100 text-indigo-800">營地裝備</span></td>
+                                <td class="p-2.5 font-bold"><label for="g22" class="cursor-pointer">野餐墊</label></td>
+                                <td class="p-2.5 text-stone-600">1 張</td>
+                                <td class="p-2.5 text-stone-600">黃色野餐墊，草地休閒放鬆區</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g23" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-indigo-100 text-indigo-800">營地裝備</span></td>
+                                <td class="p-2.5 font-bold"><label for="g23" class="cursor-pointer">防蚊罐 / 噴霧</label></td>
+                                <td class="p-2.5 text-stone-600">1 罐</td>
+                                <td class="p-2.5 text-stone-600">戶外防蚊維護</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g24" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-indigo-100 text-indigo-800">營地裝備</span></td>
+                                <td class="p-2.5 font-bold"><label for="g24" class="cursor-pointer">電風扇 (大)</label></td>
+                                <td class="p-2.5 text-stone-600">1 台</td>
+                                <td class="p-2.5 text-stone-600">公共空間通風（需充飽電 / 接電）</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g25" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-indigo-100 text-indigo-800">營地裝備</span></td>
+                                <td class="p-2.5 font-bold"><label for="g25" class="cursor-pointer">小電風扇</label></td>
+                                <td class="p-2.5 text-stone-600">1 台</td>
+                                <td class="p-2.5 text-stone-600">隨身降溫備用</td>
+                            </tr>
+                            <tr class="hover:bg-stone-50">
+                                <td class="p-2.5"><input type="checkbox" id="g26" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><span class="badge-pill bg-indigo-100 text-indigo-800">營地裝備</span></td>
+                                <td class="p-2.5 font-bold text-amber-800"><label for="g26" class="cursor-pointer">延長線</label></td>
+                                <td class="p-2.5 text-stone-600">1 條</td>
+                                <td class="p-2.5 text-stone-600">接電電扇</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Modal for Adding/Editing Item -->
+    <div id="item-modal" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-stone-200">
+            <h3 id="modal-title" class="font-bold text-lg text-forest mb-4">新增個人用品</h3>
+            
+            <div class="space-y-3.5 text-sm">
+                <div>
+                    <label class="block text-xs font-bold text-stone-600 mb-1">分類類別</label>
+                    <select id="input-category" class="w-full border border-stone-300 rounded-xl p-2.5 bg-stone-50 focus:outline-emerald-600 text-stone-800">
+                        <option value="衛生清潔">衛生清潔</option>
+                        <option value="保養">保養舒緩</option>
+                        <option value="衣物">衣物鞋履</option>
+                        <option value="玩樂">玩樂休閒</option>
+                        <option value="設備">隨身設備</option>
+                        <option value="藥品">常備藥品</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-600 mb-1">物品名稱</label>
+                    <input type="text" id="input-name" placeholder="例如：防蚊手環、太陽眼鏡" class="w-full border border-stone-300 rounded-xl p-2.5 bg-stone-50 focus:outline-emerald-600 text-stone-800">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-600 mb-1">數量 / 規格</label>
+                    <input type="text" id="input-qty" placeholder="例如：1 個、2 雙" class="w-full border border-stone-300 rounded-xl p-2.5 bg-stone-50 focus:outline-emerald-600 text-stone-800">
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-2 mt-6">
+                <button onclick="closeModal()" class="px-4 py-2 text-stone-500 hover:text-stone-700 text-sm font-medium">取消</button>
+                <button onclick="saveItem()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition-all">儲存項目</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-12 text-center text-xs text-stone-400 py-6 border-t border-stone-200">
+        <p>🏕️ 2026 藍鵲露營車兩天一夜親子遊 • 祝大家玩得超盡興！</p>
+    </footer>
+
+    <!-- Interactive Script -->
+    <script>
+        // TAB SWITCHING LOGIC
+        function switchTab(tabName) {
+            const sections = ['info', 'schedule', 'menu', 'personal', 'foodlist', 'gearlist'];
+            sections.forEach(s => {
+                const el = document.getElementById('sec-' + s);
+                const btn = document.getElementById('tab-' + s);
+                if(el) el.classList.add('hidden');
+                if(btn) btn.classList.remove('active');
+            });
+
+            const targetEl = document.getElementById('sec-' + tabName);
+            const targetBtn = document.getElementById('tab-' + tabName);
+            if(targetEl) targetEl.classList.remove('hidden');
+            if(targetBtn) targetBtn.classList.add('active');
+        }
+
+        // DYNAMIC PERSONAL ITEMS MANAGEMENT (LocalStorage)
+        const DEFAULT_PERSONAL_ITEMS = [
+            { id: 1, category: "衛生清潔", name: "小孩牙刷", qty: "1 個", checked: false },
+            { id: 2, category: "衛生清潔", name: "小孩牙膏", qty: "1 個", checked: false },
+            { id: 3, category: "衛生清潔", name: "電動牙刷", qty: "1 個", checked: false },
+            { id: 4, category: "衛生清潔", name: "大人牙膏", qty: "1 個", checked: false },
+            { id: 5, category: "保養", name: "防曬乳", qty: "1 個", checked: false },
+            { id: 6, category: "保養", name: "蚊蟲叮咬舒緩膏", qty: "1 個", checked: false },
+            { id: 7, category: "保養", name: "乳液", qty: "1 個", checked: false },
+            { id: 8, category: "保養", name: "洗面乳", qty: "1 罐", checked: false },
+            { id: 9, category: "玩樂", name: "泳衣", qty: "1 個", checked: false },
+            { id: 10, category: "玩樂", name: "浴巾", qty: "1 個", checked: false },
+            { id: 11, category: "玩樂", name: "玩沙組", qty: "1 個", checked: false },
+            { id: 12, category: "玩樂", name: "噴射火箭", qty: "1 個", checked: false },
+            { id: 13, category: "衣物", name: "拖鞋", qty: "2 雙", checked: false },
+            { id: 14, category: "衣物", name: "小孩衣服", qty: "4 套", checked: false },
+            { id: 15, category: "衣物", name: "大人衣服", qty: "2 套", checked: false },
+            { id: 16, category: "衣物", name: "大人襪子", qty: "1 雙", checked: false },
+            { id: 17, category: "衣物", name: "小孩襪子", qty: "1 雙", checked: false },
+            { id: 18, category: "藥品", name: "小孩藥品", qty: "1 包", checked: false },
+            { id: 19, category: "藥品", name: "小孩藥水", qty: "1 包", checked: false },
+            { id: 20, category: "設備", name: "防蚊液", qty: "1 個", checked: false },
+            { id: 21, category: "設備", name: "防蚊罐", qty: "1 個", checked: false },
+            { id: 22, category: "設備", name: "寶寶雷達防蚊", qty: "1 個", checked: false },
+            { id: 23, category: "設備", name: "筆電", qty: "1 個", checked: false },
+            { id: 24, category: "設備", name: "充電器", qty: "1 個", checked: false },
+            { id: 25, category: "設備", name: "雨傘", qty: "1 個", checked: false },
+            { id: 26, category: "設備", name: "大人水壺", qty: "1 個", checked: false },
+            { id: 27, category: "設備", name: "大人餐具", qty: "2 組", checked: false }
+        ];
+
+        let personalItems = [];
+        let editingItemId = null;
+
+        function loadPersonalItems() {
+            const saved = localStorage.getItem('blue_magpie_personal_items_v2');
+            if (saved) {
+                try {
+                    personalItems = JSON.parse(saved);
+                } catch(e) {
+                    personalItems = JSON.parse(JSON.stringify(DEFAULT_PERSONAL_ITEMS));
+                }
+            } else {
+                personalItems = JSON.parse(JSON.stringify(DEFAULT_PERSONAL_ITEMS));
+            }
+            renderPersonalItems();
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('blue_magpie_personal_items_v2', JSON.stringify(personalItems));
+            updatePersonalProgress();
+        }
+
+        const CATEGORY_MAP = {
+            "衛生清潔": { icon: "fa-pump-soap", color: "blue", title: "衛生清潔" },
+            "保養": { icon: "fa-spa", color: "teal", title: "保養舒緩" },
+            "衣物": { icon: "fa-shirt", color: "amber", title: "衣物穿搭" },
+            "玩樂": { icon: "fa-gamepad", color: "indigo", title: "玩樂休閒" },
+            "設備": { icon: "fa-plug", color: "purple", title: "隨身設備 & 餐具" },
+            "藥品": { icon: "fa-briefcase-medical", color: "rose", title: "常備藥品" }
+        };
+
+        function renderPersonalItems() {
+            const container = document.getElementById('personal-items-container');
+            container.innerHTML = '';
+
+            const groups = {};
+            personalItems.forEach(item => {
+                const cat = item.category || "設備";
+                if (!groups[cat]) groups[cat] = [];
+                groups[cat].push(item);
+            });
+
+            const displayCategories = ["衛生清潔", "保養", "衣物", "玩樂", "藥品", "設備"];
+            Object.keys(groups).forEach(cat => {
+                if (!displayCategories.includes(cat)) displayCategories.push(cat);
+            });
+
+            displayCategories.forEach(catKey => {
+                const itemsInCat = groups[catKey];
+                if (!itemsInCat || itemsInCat.length === 0) return;
+
+                const meta = CATEGORY_MAP[catKey] || { icon: "fa-box", color: "stone", title: catKey };
+                
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl p-5 border border-stone-200 shadow-sm";
+
+                let itemsHtml = itemsInCat.map(item => `
+                    <div class="group flex items-center justify-between p-2.5 hover:bg-stone-50 rounded-xl border border-stone-100 transition-all">
+                        <div class="flex items-center space-x-2.5 flex-1 min-w-0 mr-2">
+                            <input type="checkbox" id="p_item_${item.id}" ${item.checked ? 'checked' : ''} 
+                                   onchange="toggleItemChecked(${item.id})" class="checkbox-custom w-4 h-4 text-emerald-600 rounded cursor-pointer shrink-0">
+                            <label for="p_item_${item.id}" class="item-label text-xs sm:text-sm font-medium text-stone-800 cursor-pointer truncate select-none">
+                                <span class="editable-name" contenteditable="true" spellcheck="false" onblur="updateItemInline(${item.id}, 'name', this.innerText)">${item.name}</span> 
+                                <span class="text-xs text-stone-400 font-normal">(${item.qty || '1個'})</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center space-x-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                            <button onclick="openEditModal(${item.id})" title="編輯" class="text-stone-400 hover:text-emerald-600 p-1.5 rounded-lg hover:bg-emerald-50 text-xs">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button onclick="deleteItem(${item.id})" title="刪除" class="text-stone-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 text-xs">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-base sm:text-lg text-forest flex items-center">
+                            <i class="fa-solid ${meta.icon} text-${meta.color}-500 mr-2"></i> ${meta.title}
+                        </h3>
+                        <span class="badge-pill bg-${meta.color}-100 text-${meta.color}-800">${itemsInCat.length} 項</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                        ${itemsHtml}
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            updatePersonalProgress();
+        }
+
+        function toggleItemChecked(id) {
+            const item = personalItems.find(i => i.id === id);
+            if (item) {
+                item.checked = !item.checked;
+                saveToStorage();
+            }
+        }
+
+        function updateItemInline(id, field, value) {
+            const item = personalItems.find(i => i.id === id);
+            if (item && value.trim() !== '') {
+                item[field] = value.trim();
+                saveToStorage();
+            }
+        }
+
+        function deleteItem(id) {
+            if (confirm("確定要刪除這個用品項目嗎？")) {
+                personalItems = personalItems.filter(i => i.id !== id);
+                saveToStorage();
+                renderPersonalItems();
+            }
+        }
+
+        function openAddItemModal() {
+            editingItemId = null;
+            document.getElementById('modal-title').innerText = "新增個人用品";
+            document.getElementById('input-name').value = '';
+            document.getElementById('input-qty').value = '1 個';
+            document.getElementById('item-modal').classList.remove('hidden');
+        }
+
+        function openEditModal(id) {
+            const item = personalItems.find(i => i.id === id);
+            if (!item) return;
+            editingItemId = id;
+            document.getElementById('modal-title').innerText = "編輯個人用品";
+            document.getElementById('input-category').value = item.category;
+            document.getElementById('input-name').value = item.name;
+            document.getElementById('input-qty').value = item.qty || '1 個';
+            document.getElementById('item-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('item-modal').classList.add('hidden');
+        }
+
+        function saveItem() {
+            const cat = document.getElementById('input-category').value;
+            const name = document.getElementById('input-name').value.trim();
+            const qty = document.getElementById('input-qty').value.trim() || '1 個';
+
+            if (!name) {
+                alert("請輸入物品名稱！");
+                return;
+            }
+
+            if (editingItemId !== null) {
+                const item = personalItems.find(i => i.id === editingItemId);
+                if (item) {
+                    item.category = cat;
+                    item.name = name;
+                    item.qty = qty;
+                }
+            } else {
+                const newId = Date.now();
+                personalItems.push({
+                    id: newId,
+                    category: cat,
+                    name: name,
+                    qty: qty,
+                    checked: false
+                });
+            }
+
+            saveToStorage();
+            renderPersonalItems();
+            closeModal();
+        }
+
+        function resetPersonalItems() {
+            if (confirm("確定要將個人用品清單重設為預設值嗎？")) {
+                personalItems = JSON.parse(JSON.stringify(DEFAULT_PERSONAL_ITEMS));
+                saveToStorage();
+                renderPersonalItems();
+            }
+        }
+
+        function updatePersonalProgress() {
+            if (personalItems.length === 0) {
+                document.getElementById('personal-progress-bar').style.width = '0%';
+                document.getElementById('personal-progress-percent').innerText = '0%';
+                return;
+            }
+            const checkedCount = personalItems.filter(i => i.checked).length;
+            const percent = Math.round((checkedCount / personalItems.length) * 100);
+            document.getElementById('personal-progress-bar').style.width = percent + '%';
+            document.getElementById('personal-progress-percent').innerText = percent + '%';
+        }
+
+        // PROGRESS FOR FOOD & GEAR
+        function updateFoodProgress() {
+            const checkboxes = document.querySelectorAll('#sec-foodlist input[type="checkbox"]');
+            let checkedCount = 0;
+            checkboxes.forEach(chk => {
+                if(chk.checked) checkedCount++;
+            });
+            const percent = Math.round((checkedCount / checkboxes.length) * 100);
+            document.getElementById('food-progress-bar').style.width = percent + '%';
+            document.getElementById('food-progress-percent').innerText = percent + '%';
+        }
+
+        function updateGearProgress() {
+            const checkboxes = document.querySelectorAll('#sec-gearlist input[type="checkbox"]');
+            let checkedCount = 0;
+            checkboxes.forEach(chk => {
+                if(chk.checked) checkedCount++;
+            });
+            const percent = Math.round((checkedCount / checkboxes.length) * 100);
+            document.getElementById('gear-progress-bar').style.width = percent + '%';
+            document.getElementById('gear-progress-percent').innerText = percent + '%';
+        }
+
+        // Initialize on DOM loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPersonalItems();
+        });
+    </script>
+</body>
+</html>
