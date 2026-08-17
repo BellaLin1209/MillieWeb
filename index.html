@@ -742,14 +742,25 @@
         <!-- TAB 6: 營地裝備與用品 CHECKLIST (GEARLIST) -->
         <section id="sec-gearlist" class="hidden space-y-6">
             
-            <!-- Progress Bar -->
+            <!-- Progress Bar & Actions Header -->
             <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="font-bold text-forest flex items-center gap-2">
-                        ⛺ 營地裝備進度 (Gear Progress)
-                        <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">即時同步</span>
-                    </span>
-                    <span id="gear-progress-percent" class="font-bold text-emerald-600 text-lg">0%</span>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-bold text-forest text-base sm:text-lg">⛺ 營地裝備進度 (Gear Progress)</span>
+                            <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">即時同步</span>
+                            <span id="gear-progress-percent" class="font-bold text-emerald-600 text-lg">0%</span>
+                        </div>
+                        <p class="text-xs text-stone-500">所有人新增、編輯或刪除裝備項目，畫面皆會即時同步。</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="openAddGearModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-1.5 rounded-xl text-xs sm:text-sm flex items-center shadow-sm transition-all">
+                            <i class="fa-solid fa-plus mr-1.5"></i> 新增裝備項目
+                        </button>
+                        <button onclick="resetGearItems()" title="重設為預設清單" class="bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold px-2.5 py-1.5 rounded-xl text-xs transition-all border border-stone-200">
+                            <i class="fa-solid fa-rotate-left"></i> 重設
+                        </button>
+                    </div>
                 </div>
                 <div class="w-full bg-stone-200 h-3 rounded-full overflow-hidden">
                     <div id="gear-progress-bar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 0%"></div>
@@ -762,9 +773,9 @@
                     <h3 class="font-bold text-base sm:text-lg text-forest flex items-center">
                         <i class="fa-solid fa-fire-burner text-rose-500 mr-2"></i> 烹調器具 & 餐具用品
                     </h3>
-                    <span class="badge-pill bg-rose-100 text-rose-800">12 項</span>
+                    <span id="gear-cooking-count" class="badge-pill bg-rose-100 text-rose-800">0 項</span>
                 </div>
-                <div class="overflow-x-auto">
+                <div class="hidden sm:block overflow-x-auto">
                     <table class="w-full text-xs sm:text-sm text-left">
                         <thead class="bg-stone-100 text-stone-600 font-bold">
                             <tr>
@@ -772,97 +783,14 @@
                                 <th class="p-2.5">類別</th>
                                 <th class="p-2.5">裝備項目名稱</th>
                                 <th class="p-2.5">數量</th>
-                                <th class="p-2.5 rounded-r-lg">規格 / 檢核重點</th>
+                                <th class="p-2.5">規格 / 檢核重點</th>
+                                <th class="p-2.5 rounded-r-lg text-right">操作</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-stone-100">
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g1" onchange="syncCheckState('gear', 'g1', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-orange-100 text-orange-800">烹調器具</span></td>
-                                <td class="p-2.5 font-bold"><label for="g1" class="cursor-pointer">氣泡水機 + 氣瓶</label></td>
-                                <td class="p-2.5 text-stone-600">1 組</td>
-                                <td class="p-2.5 text-stone-600">含冷藏專用水瓶</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g2" onchange="syncCheckState('gear', 'g2', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-orange-100 text-orange-800">烹調器具</span></td>
-                                <td class="p-2.5 font-bold text-rose-700"><label for="g2" class="cursor-pointer">卡式爐</label></td>
-                                <td class="p-2.5 text-stone-600">2 爐</td>
-                                <td class="p-2.5 text-stone-600">出發前確認點火正常與爐頭清潔 (星家帶1臺)</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g3" onchange="syncCheckState('gear', 'g3', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-orange-100 text-orange-800">烹調器具</span></td>
-                                <td class="p-2.5 font-bold text-rose-700"><label for="g3" class="cursor-pointer">瓦斯罐</label></td>
-                                <td class="p-2.5 text-stone-600">3 罐</td>
-                                <td class="p-2.5 text-stone-600 font-bold text-emerald-700">當天上營地前全聯採買</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g4" onchange="syncCheckState('gear', 'g4', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-orange-100 text-orange-800">烹調器具</span></td>
-                                <td class="p-2.5 font-bold"><label for="g4" class="cursor-pointer">炒鍋</label></td>
-                                <td class="p-2.5 text-stone-600">1 個</td>
-                                <td class="p-2.5 text-stone-600">搭配奶油鮭魚炒飯翻炒回溫</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g5" onchange="syncCheckState('gear', 'g5', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-orange-100 text-orange-800">烹調器具</span></td>
-                                <td class="p-2.5 font-bold"><label for="g5" class="cursor-pointer">煎烤盤</label></td>
-                                <td class="p-2.5 text-stone-600">1 個</td>
-                                <td class="p-2.5 text-stone-600">韓式烤肉專用烤盤</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g6" onchange="syncCheckState('gear', 'g6', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">餐具用品</span></td>
-                                <td class="p-2.5 font-bold"><label for="g6" class="cursor-pointer">紙杯</label></td>
-                                <td class="p-2.5 text-stone-600">1 串</td>
-                                <td class="p-2.5 text-stone-600 font-bold text-emerald-700">當天上營地前全聯採買，備用免洗杯 (萬家準備)</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g7" onchange="syncCheckState('gear', 'g7', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">餐具用品</span></td>
-                                <td class="p-2.5 font-bold"><label for="g7" class="cursor-pointer">紙碗</label></td>
-                                <td class="p-2.5 text-stone-600">1 串</td>
-                                <td class="p-2.5 text-stone-600 font-bold text-emerald-700">當天上營地前全聯採買，主食與湯品分裝碗 (萬家準備)</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g8" onchange="syncCheckState('gear', 'g8', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">餐具用品</span></td>
-                                <td class="p-2.5 font-bold"><label for="g8" class="cursor-pointer">吸管</label></td>
-                                <td class="p-2.5 text-stone-600">數個</td>
-                                <td class="p-2.5 text-stone-600">飲品特調使用</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g9" onchange="syncCheckState('gear', 'g9', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">餐具用品</span></td>
-                                <td class="p-2.5 font-bold"><label for="g9" class="cursor-pointer">免洗筷</label></td>
-                                <td class="p-2.5 text-stone-600">數個</td>
-                                <td class="p-2.5 text-stone-600">用餐備用餐具</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g10" onchange="syncCheckState('gear', 'g10', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">餐具用品</span></td>
-                                <td class="p-2.5 font-bold"><label for="g10" class="cursor-pointer">大人筷子</label></td>
-                                <td class="p-2.5 text-stone-600">2 個</td>
-                                <td class="p-2.5 text-stone-600">自用環保餐具</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g11" onchange="syncCheckState('gear', 'g11', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">餐具用品</span></td>
-                                <td class="p-2.5 font-bold"><label for="g11" class="cursor-pointer">兒童餐具</label></td>
-                                <td class="p-2.5 text-stone-600">1 個</td>
-                                <td class="p-2.5 text-stone-600">小朋友專用匙叉</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g12" onchange="syncCheckState('gear', 'g12', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">餐具用品</span></td>
-                                <td class="p-2.5 font-bold"><label for="g12" class="cursor-pointer">兒童餐盤</label></td>
-                                <td class="p-2.5 text-stone-600">1 個</td>
-                                <td class="p-2.5 text-stone-600">小朋友專用分裝盤</td>
-                            </tr>
-                        </tbody>
+                        <tbody id="gear-cooking-tbody" class="divide-y divide-stone-100" ondragover="handleGearTbodyDragOver(event)" ondrop="handleGearTbodyDrop(event, 'cooking')"></tbody>
                     </table>
                 </div>
+                <div id="gear-cooking-cards" class="sm:hidden space-y-2" ondragover="handleGearTbodyDragOver(event)" ondrop="handleGearTbodyDrop(event, 'cooking')"></div>
             </div>
 
             <!-- Kitchen Tools & Campsite Gear -->
@@ -871,9 +799,9 @@
                     <h3 class="font-bold text-base sm:text-lg text-forest flex items-center">
                         <i class="fa-solid fa-utensils text-emerald-600 mr-2"></i> 廚房工具 & 營地生活裝備
                     </h3>
-                    <span class="badge-pill bg-emerald-100 text-emerald-800">14 項</span>
+                    <span id="gear-kitchen-count" class="badge-pill bg-emerald-100 text-emerald-800">0 項</span>
                 </div>
-                <div class="overflow-x-auto">
+                <div class="hidden sm:block overflow-x-auto">
                     <table class="w-full text-xs sm:text-sm text-left">
                         <thead class="bg-stone-100 text-stone-600 font-bold">
                             <tr>
@@ -881,118 +809,14 @@
                                 <th class="p-2.5">類別</th>
                                 <th class="p-2.5">裝備項目名稱</th>
                                 <th class="p-2.5">數量</th>
-                                <th class="p-2.5 rounded-r-lg">規格 / 檢核重點</th>
+                                <th class="p-2.5">規格 / 檢核重點</th>
+                                <th class="p-2.5 rounded-r-lg text-right">操作</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-stone-100">
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g13" onchange="syncCheckState('gear', 'g13', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
-                                <td class="p-2.5 font-bold"><label for="g13" class="cursor-pointer">鍋鏟</label></td>
-                                <td class="p-2.5 text-stone-600">2 個</td>
-                                <td class="p-2.5 text-stone-600">分別搭配炒鍋與煎烤盤使用</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g14" onchange="syncCheckState('gear', 'g14', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
-                                <td class="p-2.5 font-bold">大夾子</td>
-                                <td class="p-2.5 text-stone-600">1 個</td>
-                                <td class="p-2.5 text-stone-600">(生食用)大夾子，生熟分流防污染</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g15" onchange="syncCheckState('gear', 'g15', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
-                                <td class="p-2.5 font-bold">小夾子</td>
-                                <td class="p-2.5 text-stone-600">2 個</td>
-                                <td class="p-2.5 text-stone-600">(熟食用)小夾子，熟食分菜取食專用</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g16" onchange="syncCheckState('gear', 'g16', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
-                                <td class="p-2.5 font-bold"><label for="g16" class="cursor-pointer">大湯匙</label></td>
-                                <td class="p-2.5 text-stone-600">1 個</td>
-                                <td class="p-2.5 text-stone-600">湯品 / 仙草盛裝分裝專用</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g17" onchange="syncCheckState('gear', 'g17', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
-                                <td class="p-2.5 font-bold"><label for="g17" class="cursor-pointer">湯匙</label></td>
-                                <td class="p-2.5 text-stone-600">4 個</td>
-                                <td class="p-2.5 text-stone-600">備用湯匙</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g18" onchange="syncCheckState('gear', 'g18', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
-                                <td class="p-2.5 font-bold"><label for="g18" class="cursor-pointer">料理剪刀</label></td>
-                                <td class="p-2.5 text-stone-600">1 個</td>
-                                <td class="p-2.5 text-stone-600">烤肉剪塊 / 食材修剪必備</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g19" onchange="syncCheckState('gear', 'g19', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
-                                <td class="p-2.5 font-bold"><label for="g19" class="cursor-pointer">托盤</label></td>
-                                <td class="p-2.5 text-stone-600">1 個</td>
-                                <td class="p-2.5 text-stone-600">食材出盤與盛裝上桌專用</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g20" onchange="syncCheckState('gear', 'g20', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
-                                <td class="p-2.5 font-bold"><label for="g20" class="cursor-pointer">鐵鍋盆</label></td>
-                                <td class="p-2.5 text-stone-600">1 個</td>
-                                <td class="p-2.5 text-stone-600">洗菜、備料、盛裝備用</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g21" onchange="syncCheckState('gear', 'g21', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
-                                <td class="p-2.5 font-bold"><label for="g21" class="cursor-pointer">噴油罐</label></td>
-                                <td class="p-2.5 text-stone-600">1 個</td>
-                                <td class="p-2.5 text-stone-600">煎烤盤防黏均勻噴油使用</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g27" onchange="syncCheckState('gear', 'g27', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
-                                <td class="p-2.5 font-bold"><label for="g27" class="cursor-pointer">廚房紙巾</label></td>
-                                <td class="p-2.5 text-stone-600">1 捲</td>
-                                <td class="p-2.5 text-stone-600">生菜吸水、煎烤擦拭油污、料理台清潔</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g22" onchange="syncCheckState('gear', 'g22', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-indigo-100 text-indigo-800">營地裝備</span></td>
-                                <td class="p-2.5 font-bold"><label for="g22" class="cursor-pointer">野餐墊</label></td>
-                                <td class="p-2.5 text-stone-600">1 張</td>
-                                <td class="p-2.5 text-stone-600">黃色野餐墊，草地休閒放鬆區</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g23" onchange="syncCheckState('gear', 'g23', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-indigo-100 text-indigo-800">營地裝備</span></td>
-                                <td class="p-2.5 font-bold"><label for="g23" class="cursor-pointer">防蚊罐 / 噴霧</label></td>
-                                <td class="p-2.5 text-stone-600">1 罐</td>
-                                <td class="p-2.5 text-stone-600">戶外防蚊維護</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g24" onchange="syncCheckState('gear', 'g24', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-indigo-100 text-indigo-800">營地裝備</span></td>
-                                <td class="p-2.5 font-bold"><label for="g24" class="cursor-pointer">立式電風扇</label></td>
-                                <td class="p-2.5 text-stone-600">1 台</td>
-                                <td class="p-2.5 text-stone-600">公共空間通風（接電）</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g25" onchange="syncCheckState('gear', 'g25', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-indigo-100 text-indigo-800">營地裝備</span></td>
-                                <td class="p-2.5 font-bold"><label for="g25" class="cursor-pointer">小電風扇</label></td>
-                                <td class="p-2.5 text-stone-600">1 台</td>
-                                <td class="p-2.5 text-stone-600">隨身降溫備用（需充飽電)</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g26" onchange="syncCheckState('gear', 'g26', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-indigo-100 text-indigo-800">營地裝備</span></td>
-                                <td class="p-2.5 font-bold text-amber-800"><label for="g26" class="cursor-pointer">延長線</label></td>
-                                <td class="p-2.5 text-stone-600">1 條</td>
-                                <td class="p-2.5 text-stone-600">接電風扇用</td>
-                            </tr>
-                        </tbody>
+                        <tbody id="gear-kitchen-tbody" class="divide-y divide-stone-100" ondragover="handleGearTbodyDragOver(event)" ondrop="handleGearTbodyDrop(event, 'kitchen')"></tbody>
                     </table>
                 </div>
+                <div id="gear-kitchen-cards" class="sm:hidden space-y-2" ondragover="handleGearTbodyDragOver(event)" ondrop="handleGearTbodyDrop(event, 'kitchen')"></div>
             </div>
 
         </section>
@@ -1193,6 +1017,49 @@
         </div>
     </div>
 
+    <!-- Modal for Adding/Editing Gear Item -->
+    <div id="gear-modal" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-stone-200">
+            <h3 id="gear-modal-title" class="font-bold text-lg text-forest mb-4">新增裝備項目</h3>
+
+            <div class="space-y-3.5 text-sm">
+                <div>
+                    <label class="block text-xs font-bold text-stone-600 mb-1">存放分區</label>
+                    <select id="gear-input-section" class="w-full border border-stone-300 rounded-xl p-2.5 bg-stone-50 focus:outline-emerald-600 text-stone-800">
+                        <option value="cooking">烹調器具 & 餐具用品</option>
+                        <option value="kitchen">廚房工具 & 營地生活裝備</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-600 mb-1">類別</label>
+                    <select id="gear-input-category" class="w-full border border-stone-300 rounded-xl p-2.5 bg-stone-50 focus:outline-emerald-600 text-stone-800">
+                        <option value="烹調器具">烹調器具</option>
+                        <option value="餐具用品">餐具用品</option>
+                        <option value="廚房工具">廚房工具</option>
+                        <option value="營地裝備">營地裝備</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-600 mb-1">裝備項目名稱</label>
+                    <input type="text" id="gear-input-name" placeholder="例如：卡式爐、大夾子" class="w-full border border-stone-300 rounded-xl p-2.5 bg-stone-50 focus:outline-emerald-600 text-stone-800">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-600 mb-1">數量</label>
+                    <input type="text" id="gear-input-qty" placeholder="例如：1 個、2 爐" class="w-full border border-stone-300 rounded-xl p-2.5 bg-stone-50 focus:outline-emerald-600 text-stone-800">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-600 mb-1">規格 / 檢核重點</label>
+                    <input type="text" id="gear-input-note" placeholder="例如：出發前確認點火正常" class="w-full border border-stone-300 rounded-xl p-2.5 bg-stone-50 focus:outline-emerald-600 text-stone-800">
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-2 mt-6">
+                <button onclick="closeGearModal()" class="px-4 py-2 text-stone-500 hover:text-stone-700 text-sm font-medium">取消</button>
+                <button onclick="saveGearModalItem()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition-all">儲存項目</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="mt-12 text-center text-xs text-stone-400 py-6 border-t border-stone-200">
         <p>🏕️ 2026 藍鵲露營車兩天一夜親子遊 • 祝大家玩得超盡興！</p>
@@ -1220,14 +1087,6 @@
         // FIREBASE REALTIME SYNC HANDLERS
         // ==========================================
 
-        // 裝備 Checkbox 點擊寫入雲端 (食材項目改由 saveFoodItems() 整批同步)
-        function syncCheckState(type, id, checked) {
-            if (window.firebaseDB && window.fbRef && window.fbSet) {
-                window.fbSet(window.fbRef(window.firebaseDB, `camping_${type}/${id}`), checked);
-            }
-            if (type === 'gear') updateGearProgress();
-        }
-
         function initFirebaseListeners() {
             if (!window.firebaseDB) return;
 
@@ -1240,15 +1099,11 @@
             });
 
             // 2. 監聽營地裝備
-            const gearRef = window.fbRef(window.firebaseDB, 'camping_gear');
-            window.fbOnValue(gearRef, (snap) => {
-                const data = snap.val() || {};
-                document.querySelectorAll('#sec-gearlist input[type="checkbox"]').forEach(chk => {
-                    if (data[chk.id] !== undefined) {
-                        chk.checked = !!data[chk.id];
-                    }
-                });
-                updateGearProgress();
+            const gearItemsRef = window.fbRef(window.firebaseDB, 'camping_gear_items');
+            window.fbOnValue(gearItemsRef, (snap) => {
+                const data = snap.val();
+                gearItems = data && data.length ? data : JSON.parse(JSON.stringify(DEFAULT_GEAR_ITEMS));
+                renderGearItems();
             });
 
             // 3. 監聽分帳小工具
@@ -1808,6 +1663,291 @@
         }
 
         // ==========================================
+        // DYNAMIC GEAR LIST MANAGEMENT (Firebase realtime, localStorage fallback)
+        // ==========================================
+        const DEFAULT_GEAR_ITEMS = [
+            { id: 1, section: "cooking", category: "烹調器具", name: "氣泡水機 + 氣瓶", qty: "1 組", note: "含冷藏專用水瓶", checked: false },
+            { id: 2, section: "cooking", category: "烹調器具", name: "卡式爐", qty: "2 爐", note: "出發前確認點火正常與爐頭清潔 (星家帶1臺)", checked: false },
+            { id: 3, section: "cooking", category: "烹調器具", name: "瓦斯罐", qty: "3 罐", note: "當天上營地前全聯採買", checked: false },
+            { id: 4, section: "cooking", category: "烹調器具", name: "炒鍋", qty: "1 個", note: "搭配奶油鮭魚炒飯翻炒回溫", checked: false },
+            { id: 5, section: "cooking", category: "烹調器具", name: "煎烤盤", qty: "1 個", note: "韓式烤肉專用烤盤", checked: false },
+            { id: 6, section: "cooking", category: "餐具用品", name: "紙杯", qty: "1 串", note: "當天上營地前全聯採買，備用免洗杯 (萬家準備)", checked: false },
+            { id: 7, section: "cooking", category: "餐具用品", name: "紙碗", qty: "1 串", note: "當天上營地前全聯採買，主食與湯品分裝碗 (萬家準備)", checked: false },
+            { id: 8, section: "cooking", category: "餐具用品", name: "吸管", qty: "數個", note: "飲品特調使用", checked: false },
+            { id: 9, section: "cooking", category: "餐具用品", name: "免洗筷", qty: "數個", note: "用餐備用餐具", checked: false },
+            { id: 10, section: "cooking", category: "餐具用品", name: "大人筷子", qty: "2 個", note: "自用環保餐具", checked: false },
+            { id: 11, section: "cooking", category: "餐具用品", name: "兒童餐具", qty: "1 個", note: "小朋友專用匙叉", checked: false },
+            { id: 12, section: "cooking", category: "餐具用品", name: "兒童餐盤", qty: "1 個", note: "小朋友專用分裝盤", checked: false },
+            { id: 13, section: "kitchen", category: "廚房工具", name: "鍋鏟", qty: "2 個", note: "分別搭配炒鍋與煎烤盤使用", checked: false },
+            { id: 14, section: "kitchen", category: "廚房工具", name: "大夾子", qty: "1 個", note: "(生食用)大夾子，生熟分流防污染", checked: false },
+            { id: 15, section: "kitchen", category: "廚房工具", name: "小夾子", qty: "2 個", note: "(熟食用)小夾子，熟食分菜取食專用", checked: false },
+            { id: 16, section: "kitchen", category: "廚房工具", name: "大湯匙", qty: "1 個", note: "湯品 / 仙草盛裝分裝專用", checked: false },
+            { id: 17, section: "kitchen", category: "廚房工具", name: "湯匙", qty: "4 個", note: "備用湯匙", checked: false },
+            { id: 18, section: "kitchen", category: "廚房工具", name: "料理剪刀", qty: "1 個", note: "烤肉剪塊 / 食材修剪必備", checked: false },
+            { id: 19, section: "kitchen", category: "廚房工具", name: "托盤", qty: "1 個", note: "食材出盤與盛裝上桌專用", checked: false },
+            { id: 20, section: "kitchen", category: "廚房工具", name: "鐵鍋盆", qty: "1 個", note: "洗菜、備料、盛裝備用", checked: false },
+            { id: 21, section: "kitchen", category: "廚房工具", name: "噴油罐", qty: "1 個", note: "煎烤盤防黏均勻噴油使用", checked: false },
+            { id: 27, section: "kitchen", category: "廚房工具", name: "廚房紙巾", qty: "1 捲", note: "生菜吸水、煎烤擦拭油污、料理台清潔", checked: false },
+            { id: 22, section: "kitchen", category: "營地裝備", name: "野餐墊", qty: "1 張", note: "黃色野餐墊，草地休閒放鬆區", checked: false },
+            { id: 23, section: "kitchen", category: "營地裝備", name: "防蚊罐 / 噴霧", qty: "1 罐", note: "戶外防蚊維護", checked: false },
+            { id: 24, section: "kitchen", category: "營地裝備", name: "立式電風扇", qty: "1 台", note: "公共空間通風（接電）", checked: false },
+            { id: 25, section: "kitchen", category: "營地裝備", name: "小電風扇", qty: "1 台", note: "隨身降溫備用（需充飽電）", checked: false },
+            { id: 26, section: "kitchen", category: "營地裝備", name: "延長線", qty: "1 條", note: "接電風扇用", checked: false }
+        ];
+
+        const GEAR_CATEGORY_COLORS = {
+            "烹調器具": "orange",
+            "餐具用品": "stone",
+            "廚房工具": "teal",
+            "營地裝備": "indigo"
+        };
+
+        let gearItems = [];
+        let editingGearId = null;
+
+        function loadGearItems() {
+            const saved = localStorage.getItem('blue_magpie_gear_items_v1');
+            if (saved) {
+                try {
+                    gearItems = JSON.parse(saved);
+                } catch (e) {
+                    gearItems = JSON.parse(JSON.stringify(DEFAULT_GEAR_ITEMS));
+                }
+            } else {
+                gearItems = JSON.parse(JSON.stringify(DEFAULT_GEAR_ITEMS));
+            }
+            renderGearItems();
+        }
+
+        function saveGearItems() {
+            if (window.firebaseDB && window.fbRef && window.fbSet) {
+                window.fbSet(window.fbRef(window.firebaseDB, 'camping_gear_items'), gearItems);
+            } else {
+                localStorage.setItem('blue_magpie_gear_items_v1', JSON.stringify(gearItems));
+            }
+            renderGearItems();
+        }
+
+        function renderGearRow(item) {
+            const color = GEAR_CATEGORY_COLORS[item.category] || "stone";
+            const isBuyDay = (item.note || '').includes('當天');
+            const noteClass = isBuyDay ? 'text-stone-600 font-bold text-emerald-700' : 'text-stone-600';
+            return `
+                <tr class="hover:bg-stone-50 transition-colors cursor-grab active:cursor-grabbing" data-gear-id="${item.id}" draggable="true" ondragstart="handleGearDragStart(event, ${item.id})" ondragend="handleGearDragEnd(event)">
+                    <td class="p-2.5 cursor-pointer" onclick="toggleGearChecked(${item.id})"><input type="checkbox" ${item.checked ? 'checked' : ''} class="checkbox-custom w-4 h-4 text-emerald-600 rounded pointer-events-none"></td>
+                    <td class="p-2.5"><span class="badge-pill bg-${color}-100 text-${color}-800">${item.category}</span></td>
+                    <td class="p-2.5 font-bold">${item.name}</td>
+                    <td class="p-2.5 text-stone-600">${item.qty || '-'}</td>
+                    <td class="p-2.5 ${noteClass}">${item.note || '-'}</td>
+                    <td class="p-2.5 text-right space-x-1 whitespace-nowrap">
+                        <button onclick="openEditGearModal(${item.id})" title="編輯" class="text-stone-400 hover:text-emerald-600 p-1.5 rounded-lg hover:bg-emerald-50 text-xs"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteGearItem(${item.id})" title="刪除" class="text-stone-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 text-xs"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function renderGearCard(item) {
+            const color = GEAR_CATEGORY_COLORS[item.category] || "stone";
+            const isBuyDay = (item.note || '').includes('當天');
+            const noteClass = isBuyDay ? 'font-bold text-emerald-700' : 'text-stone-500';
+            return `
+                <div class="border border-stone-100 rounded-xl p-3 active:cursor-grabbing" data-gear-id="${item.id}" draggable="true" ondragstart="handleGearDragStart(event, ${item.id})" ondragend="handleGearDragEnd(event)">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="flex items-start gap-2.5 flex-1 min-w-0 cursor-pointer" onclick="toggleGearChecked(${item.id})">
+                            <input type="checkbox" ${item.checked ? 'checked' : ''} class="checkbox-custom w-4 h-4 mt-0.5 text-emerald-600 rounded pointer-events-none shrink-0">
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="font-bold text-sm text-stone-800 break-words">${item.name}</span>
+                                    <span class="badge-pill bg-${color}-100 text-${color}-800 text-[10px] shrink-0">${item.category}</span>
+                                </div>
+                                ${item.qty ? `<div class="text-xs text-stone-500 mt-0.5">${item.qty}</div>` : ''}
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1 shrink-0">
+                            <button onclick="openEditGearModal(${item.id})" title="編輯" class="text-stone-400 hover:text-emerald-600 p-1.5 rounded-lg hover:bg-emerald-50 text-xs"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteGearItem(${item.id})" title="刪除" class="text-stone-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 text-xs"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    </div>
+                    ${item.note && item.note !== '-' ? `<div class="text-xs ${noteClass} mt-1.5 pl-[26px] break-words">${item.note}</div>` : ''}
+                </div>
+            `;
+        }
+
+        function renderGearItems() {
+            const cookingItems = gearItems.filter(i => i.section === 'cooking');
+            const kitchenItems = gearItems.filter(i => i.section === 'kitchen');
+            const emptyRow = `<tr><td colspan="6" class="p-4 text-center text-stone-400 text-xs">尚無項目，請點擊上方「新增裝備項目」</td></tr>`;
+            const emptyCard = `<div class="p-4 text-center text-stone-400 text-xs">尚無項目，請點擊上方「新增裝備項目」</div>`;
+
+            const cookingTbody = document.getElementById('gear-cooking-tbody');
+            const kitchenTbody = document.getElementById('gear-kitchen-tbody');
+            const cookingCards = document.getElementById('gear-cooking-cards');
+            const kitchenCards = document.getElementById('gear-kitchen-cards');
+
+            if (cookingTbody) cookingTbody.innerHTML = cookingItems.length ? cookingItems.map(renderGearRow).join('') : emptyRow;
+            if (kitchenTbody) kitchenTbody.innerHTML = kitchenItems.length ? kitchenItems.map(renderGearRow).join('') : emptyRow;
+            if (cookingCards) cookingCards.innerHTML = cookingItems.length ? cookingItems.map(renderGearCard).join('') : emptyCard;
+            if (kitchenCards) kitchenCards.innerHTML = kitchenItems.length ? kitchenItems.map(renderGearCard).join('') : emptyCard;
+
+            const cookingCount = document.getElementById('gear-cooking-count');
+            const kitchenCount = document.getElementById('gear-kitchen-count');
+            if (cookingCount) cookingCount.innerText = cookingItems.length + ' 項';
+            if (kitchenCount) kitchenCount.innerText = kitchenItems.length + ' 項';
+
+            updateGearProgress();
+        }
+
+        function toggleGearChecked(id) {
+            const item = gearItems.find(i => i.id === id);
+            if (item) {
+                item.checked = !item.checked;
+                saveGearItems();
+            }
+        }
+
+        // 手動拖拉排序
+        let draggedGearId = null;
+
+        function handleGearDragStart(e, id) {
+            draggedGearId = id;
+            e.dataTransfer.effectAllowed = 'move';
+            try { e.dataTransfer.setData('text/plain', String(id)); } catch (err) {}
+            e.currentTarget.classList.add('opacity-40');
+        }
+
+        function handleGearDragEnd(e) {
+            e.currentTarget.classList.remove('opacity-40');
+            document.querySelectorAll('.gear-drag-over').forEach(el => el.classList.remove('gear-drag-over', 'bg-emerald-50'));
+            draggedGearId = null;
+        }
+
+        function handleGearTbodyDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            const row = e.target.closest('[data-gear-id]');
+            document.querySelectorAll('.gear-drag-over').forEach(el => el.classList.remove('gear-drag-over', 'bg-emerald-50'));
+            if (row && Number(row.dataset.gearId) !== draggedGearId) {
+                row.classList.add('gear-drag-over', 'bg-emerald-50');
+            }
+        }
+
+        function handleGearTbodyDrop(e, section) {
+            e.preventDefault();
+            document.querySelectorAll('.gear-drag-over').forEach(el => el.classList.remove('gear-drag-over', 'bg-emerald-50'));
+            if (draggedGearId === null) return;
+
+            const targetRow = e.target.closest('[data-gear-id]');
+            const targetId = targetRow ? Number(targetRow.dataset.gearId) : null;
+            if (targetId === draggedGearId) { draggedGearId = null; return; }
+
+            const fromIndex = gearItems.findIndex(i => i.id === draggedGearId);
+            if (fromIndex === -1) { draggedGearId = null; return; }
+            const [draggedItem] = gearItems.splice(fromIndex, 1);
+            draggedItem.section = section;
+
+            let toIndex = targetId !== null ? gearItems.findIndex(i => i.id === targetId) : -1;
+
+            if (toIndex === -1) {
+                let lastSectionIndex = -1;
+                gearItems.forEach((it, idx) => { if (it.section === section) lastSectionIndex = idx; });
+                toIndex = lastSectionIndex + 1;
+            }
+            gearItems.splice(toIndex, 0, draggedItem);
+
+            draggedGearId = null;
+            saveGearItems();
+        }
+
+        function getGearCategoryInsertIndex(section, category) {
+            let lastCategoryIndex = -1;
+            let lastSectionIndex = -1;
+            gearItems.forEach((it, idx) => {
+                if (it.section === section) {
+                    lastSectionIndex = idx;
+                    if (it.category === category) lastCategoryIndex = idx;
+                }
+            });
+            return (lastCategoryIndex !== -1 ? lastCategoryIndex : lastSectionIndex) + 1;
+        }
+
+        function openAddGearModal() {
+            editingGearId = null;
+            document.getElementById('gear-modal-title').innerText = "新增裝備項目";
+            document.getElementById('gear-input-section').value = 'cooking';
+            document.getElementById('gear-input-category').value = '烹調器具';
+            document.getElementById('gear-input-name').value = '';
+            document.getElementById('gear-input-qty').value = '';
+            document.getElementById('gear-input-note').value = '';
+            document.getElementById('gear-modal').classList.remove('hidden');
+        }
+
+        function openEditGearModal(id) {
+            const item = gearItems.find(i => i.id === id);
+            if (!item) return;
+            editingGearId = id;
+            document.getElementById('gear-modal-title').innerText = "編輯裝備項目";
+            document.getElementById('gear-input-section').value = item.section;
+            document.getElementById('gear-input-category').value = item.category;
+            document.getElementById('gear-input-name').value = item.name;
+            document.getElementById('gear-input-qty').value = item.qty || '';
+            document.getElementById('gear-input-note').value = item.note || '';
+            document.getElementById('gear-modal').classList.remove('hidden');
+        }
+
+        function closeGearModal() {
+            document.getElementById('gear-modal').classList.add('hidden');
+        }
+
+        function saveGearModalItem() {
+            const section = document.getElementById('gear-input-section').value;
+            const category = document.getElementById('gear-input-category').value;
+            const name = document.getElementById('gear-input-name').value.trim();
+            const qty = document.getElementById('gear-input-qty').value.trim() || '-';
+            const note = document.getElementById('gear-input-note').value.trim() || '-';
+
+            if (!name) {
+                alert("請輸入裝備項目名稱！");
+                return;
+            }
+
+            if (editingGearId !== null) {
+                const item = gearItems.find(i => i.id === editingGearId);
+                if (item) {
+                    item.section = section;
+                    item.category = category;
+                    item.name = name;
+                    item.qty = qty;
+                    item.note = note;
+                }
+            } else {
+                const newItem = {
+                    id: Date.now(),
+                    section, category, name, qty, note,
+                    checked: false
+                };
+                gearItems.splice(getGearCategoryInsertIndex(section, category), 0, newItem);
+            }
+
+            saveGearItems();
+            closeGearModal();
+        }
+
+        function deleteGearItem(id) {
+            if (confirm("確定要刪除這個裝備項目嗎？")) {
+                gearItems = gearItems.filter(i => i.id !== id);
+                saveGearItems();
+            }
+        }
+
+        function resetGearItems() {
+            if (confirm("確定要將裝備清單重設為預設值嗎？")) {
+                gearItems = JSON.parse(JSON.stringify(DEFAULT_GEAR_ITEMS));
+                saveGearItems();
+            }
+        }
+
+        // ==========================================
         // 分帳小工具 LOGIC (SHARE / SPLIT CALC)
         // ==========================================
         let families = ['萬萬', '星星', '周周'];
@@ -2086,8 +2226,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadPersonalItems();
             loadFoodItems();
+            loadGearItems();
             renderSplitApp();
-            updateGearProgress();
         });
     </script>
 </body>
