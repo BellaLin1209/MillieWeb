@@ -56,6 +56,19 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+        .checklist-filter-pill {
+            background-color: #f5f5f4;
+            color: #57534e;
+            border-color: #e7e5e4;
+        }
+        .checklist-filter-pill:hover {
+            background-color: #e7e5e4;
+        }
+        .checklist-filter-pill.active {
+            background-color: #1e3f2d;
+            color: #ffffff;
+            border-color: #1e3f2d;
+        }
     </style>
 
     <!-- Firebase Realtime Database Scripts (Modular via script type=module) -->
@@ -154,11 +167,8 @@
                 <button onclick="switchTab('personal')" id="tab-personal" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
                     <i class="fa-solid fa-suitcase-rolling mr-1"></i> 個人用品
                 </button>
-                <button onclick="switchTab('foodlist')" id="tab-foodlist" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
-                    <i class="fa-solid fa-basket-shopping mr-1"></i> 食材清單 <span class="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.5 rounded-full font-bold ml-0.5">即時</span>
-                </button>
-                <button onclick="switchTab('gearlist')" id="tab-gearlist" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
-                    <i class="fa-solid fa-campground mr-1"></i> 營地裝備 <span class="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.5 rounded-full font-bold ml-0.5">即時</span>
+                <button onclick="switchTab('checklist')" id="tab-checklist" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
+                    <i class="fa-solid fa-boxes-stacked mr-1"></i> 食材＆裝備 <span class="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.5 rounded-full font-bold ml-0.5">即時</span>
                 </button>
                 <button onclick="switchTab('split')" id="tab-split" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
                     <i class="fa-solid fa-calculator mr-1"></i> 分帳小工具 <span class="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.5 rounded-full font-bold ml-0.5">即時</span>
@@ -176,7 +186,7 @@
 
         <!-- TAB 1: 行前概覽 (INFO) -->
         <section id="sec-info" class="space-y-6">
-            
+
             <!-- Location & Facilities Highlight Card -->
             <div class="glass-card rounded-2xl p-6 border border-stone-200 shadow-sm relative overflow-hidden">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-stone-100 pb-4 mb-4">
@@ -661,168 +671,218 @@
 
         </section>
 
-        <!-- TAB 5: 食材與餐食 CHECKLIST (FOODLIST) -->
-        <section id="sec-foodlist" class="hidden space-y-6">
-            
-            <!-- Progress Bar & Actions Header -->
-            <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
-                    <div>
-                        <div class="flex items-center space-x-2">
-                            <span class="font-bold text-forest text-base sm:text-lg">🍱 食材準備進度 (Food Progress)</span>
-                            <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">即時同步</span>
-                            <span id="food-progress-percent" class="font-bold text-emerald-600 text-lg">0%</span>
+        <!-- TAB 5: 食材＆裝備整合 CHECKLIST (CHECKLIST) -->
+        <section id="sec-checklist" class="hidden space-y-6">
+
+            <!-- Filter Pills -->
+            <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm">
+                <div class="flex items-center justify-between gap-3 mb-1 flex-wrap">
+                    <span class="font-bold text-forest text-base sm:text-lg">🧺 食材＆裝備整備清單</span>
+                    <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">即時同步</span>
+                </div>
+                <p class="text-xs text-stone-500 mb-3">食材清單、營地裝備、當天採買彙整在同一頁，用下方分類切換檢視。</p>
+                <div class="flex gap-2 flex-wrap">
+                    <button onclick="setChecklistFilter('all')" id="checklist-filter-all" class="checklist-filter-pill active px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold border transition-all">全部</button>
+                    <button onclick="setChecklistFilter('food')" id="checklist-filter-food" class="checklist-filter-pill px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold border transition-all">🍱 食材清單</button>
+                    <button onclick="setChecklistFilter('gear')" id="checklist-filter-gear" class="checklist-filter-pill px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold border transition-all">⛺ 營地裝備</button>
+                    <button onclick="setChecklistFilter('shopping')" id="checklist-filter-shopping" class="checklist-filter-pill px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold border transition-all">🛒 當天採買</button>
+                </div>
+            </div>
+
+            <!-- GROUP: 食材清單 -->
+            <div id="checklist-group-food" class="space-y-6">
+
+                <!-- Progress Bar & Actions Header -->
+                <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <span class="font-bold text-forest text-base sm:text-lg">🍱 食材準備進度 (Food Progress)</span>
+                                <span id="food-progress-percent" class="font-bold text-emerald-600 text-lg">0%</span>
+                            </div>
+                            <p class="text-xs text-stone-500">所有人新增、編輯或刪除食材項目，畫面皆會即時同步。</p>
                         </div>
-                        <p class="text-xs text-stone-500">所有人新增、編輯或刪除食材項目，畫面皆會即時同步。</p>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <button onclick="openAddFoodModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-1.5 rounded-xl text-xs sm:text-sm flex items-center shadow-sm transition-all">
-                            <i class="fa-solid fa-plus mr-1.5"></i> 新增食材項目
-                        </button>
-                        <button onclick="resetFoodItems()" title="重設為預設清單" class="bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold px-2.5 py-1.5 rounded-xl text-xs transition-all border border-stone-200">
-                            <i class="fa-solid fa-rotate-left"></i> 重設
-                        </button>
-                    </div>
-                </div>
-                <div class="w-full bg-stone-200 h-3 rounded-full overflow-hidden">
-                    <div id="food-progress-bar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 0%"></div>
-                </div>
-            </div>
-
-            <!-- Cold Storage -->
-            <div class="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="font-bold text-base sm:text-lg text-forest flex items-center">
-                        <i class="fa-solid fa-snowflake text-blue-500 mr-2"></i> 冷藏 / 保冷袋分區 (需低溫控溫)
-                    </h3>
-                    <span id="food-cold-count" class="badge-pill bg-blue-100 text-blue-800">0 項</span>
-                </div>
-                <div class="hidden sm:block overflow-x-auto">
-                    <table class="w-full text-xs sm:text-sm text-left">
-                        <thead class="bg-stone-100 text-stone-600 font-bold">
-                            <tr>
-                                <th class="p-2.5 rounded-l-lg">勾選</th>
-                                <th class="p-2.5">類別</th>
-                                <th class="p-2.5">菜單/食材名稱</th>
-                                <th class="p-2.5">份量/容器</th>
-                                <th class="p-2.5">盛盤</th>
-                                <th class="p-2.5">前置處理與備註</th>
-                                <th class="p-2.5 rounded-r-lg text-right">操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="food-cold-tbody" class="divide-y divide-stone-100" ondragover="handleFoodTbodyDragOver(event)" ondrop="handleFoodTbodyDrop(event, 'cold')"></tbody>
-                    </table>
-                </div>
-                <div id="food-cold-cards" class="sm:hidden space-y-2" ondragover="handleFoodTbodyDragOver(event)" ondrop="handleFoodTbodyDrop(event, 'cold')"></div>
-            </div>
-
-            <!-- Ambient Dry Goods -->
-            <div class="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="font-bold text-base sm:text-lg text-forest flex items-center">
-                        <i class="fa-solid fa-box-open text-amber-500 mr-2"></i> 常溫裝箱分區 (乾貨、調味與耗材)
-                    </h3>
-                    <span id="food-ambient-count" class="badge-pill bg-amber-100 text-amber-800">0 項</span>
-                </div>
-                <div class="hidden sm:block overflow-x-auto">
-                    <table class="w-full text-xs sm:text-sm text-left">
-                        <thead class="bg-stone-100 text-stone-600 font-bold">
-                            <tr>
-                                <th class="p-2.5 rounded-l-lg">勾選</th>
-                                <th class="p-2.5">類別</th>
-                                <th class="p-2.5">菜單/項目名稱</th>
-                                <th class="p-2.5">份量/容器</th>
-                                <th class="p-2.5">盛盤</th>
-                                <th class="p-2.5">前置處理與備註</th>
-                                <th class="p-2.5 rounded-r-lg text-right">操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="food-ambient-tbody" class="divide-y divide-stone-100" ondragover="handleFoodTbodyDragOver(event)" ondrop="handleFoodTbodyDrop(event, 'ambient')"></tbody>
-                    </table>
-                </div>
-                <div id="food-ambient-cards" class="sm:hidden space-y-2" ondragover="handleFoodTbodyDragOver(event)" ondrop="handleFoodTbodyDrop(event, 'ambient')"></div>
-            </div>
-
-        </section>
-
-        <!-- TAB 6: 營地裝備與用品 CHECKLIST (GEARLIST) -->
-        <section id="sec-gearlist" class="hidden space-y-6">
-            
-            <!-- Progress Bar & Actions Header -->
-            <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
-                    <div>
                         <div class="flex items-center space-x-2">
-                            <span class="font-bold text-forest text-base sm:text-lg">⛺ 營地裝備進度 (Gear Progress)</span>
-                            <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">即時同步</span>
-                            <span id="gear-progress-percent" class="font-bold text-emerald-600 text-lg">0%</span>
+                            <button onclick="openAddFoodModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-1.5 rounded-xl text-xs sm:text-sm flex items-center shadow-sm transition-all">
+                                <i class="fa-solid fa-plus mr-1.5"></i> 新增食材項目
+                            </button>
+                            <button onclick="resetFoodItems()" title="重設為預設清單" class="bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold px-2.5 py-1.5 rounded-xl text-xs transition-all border border-stone-200">
+                                <i class="fa-solid fa-rotate-left"></i> 重設
+                            </button>
                         </div>
-                        <p class="text-xs text-stone-500">所有人新增、編輯或刪除裝備項目，畫面皆會即時同步。</p>
                     </div>
-                    <div class="flex items-center space-x-2">
-                        <button onclick="openAddGearModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-1.5 rounded-xl text-xs sm:text-sm flex items-center shadow-sm transition-all">
-                            <i class="fa-solid fa-plus mr-1.5"></i> 新增裝備項目
-                        </button>
-                        <button onclick="resetGearItems()" title="重設為預設清單" class="bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold px-2.5 py-1.5 rounded-xl text-xs transition-all border border-stone-200">
-                            <i class="fa-solid fa-rotate-left"></i> 重設
-                        </button>
+                    <div class="w-full bg-stone-200 h-3 rounded-full overflow-hidden">
+                        <div id="food-progress-bar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 0%"></div>
                     </div>
                 </div>
-                <div class="w-full bg-stone-200 h-3 rounded-full overflow-hidden">
-                    <div id="gear-progress-bar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 0%"></div>
+
+                <!-- Cold Storage -->
+                <div class="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-base sm:text-lg text-forest flex items-center">
+                            <i class="fa-solid fa-snowflake text-blue-500 mr-2"></i> 冷藏 / 保冷袋分區 (需低溫控溫)
+                        </h3>
+                        <span id="food-cold-count" class="badge-pill bg-blue-100 text-blue-800">0 項</span>
+                    </div>
+                    <div class="hidden sm:block overflow-x-auto">
+                        <table class="w-full text-xs sm:text-sm text-left">
+                            <thead class="bg-stone-100 text-stone-600 font-bold">
+                                <tr>
+                                    <th class="p-2.5 rounded-l-lg">勾選</th>
+                                    <th class="p-2.5">類別</th>
+                                    <th class="p-2.5">菜單/食材名稱</th>
+                                    <th class="p-2.5">份量/容器</th>
+                                    <th class="p-2.5">盛盤</th>
+                                    <th class="p-2.5">前置處理與備註</th>
+                                    <th class="p-2.5 rounded-r-lg text-right">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="food-cold-tbody" class="divide-y divide-stone-100" ondragover="handleFoodTbodyDragOver(event)" ondrop="handleFoodTbodyDrop(event, 'cold')"></tbody>
+                        </table>
+                    </div>
+                    <div id="food-cold-cards" class="sm:hidden space-y-2" ondragover="handleFoodTbodyDragOver(event)" ondrop="handleFoodTbodyDrop(event, 'cold')"></div>
                 </div>
+
+                <!-- Ambient Dry Goods -->
+                <div class="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-base sm:text-lg text-forest flex items-center">
+                            <i class="fa-solid fa-box-open text-amber-500 mr-2"></i> 常溫裝箱分區 (乾貨、調味與耗材)
+                        </h3>
+                        <span id="food-ambient-count" class="badge-pill bg-amber-100 text-amber-800">0 項</span>
+                    </div>
+                    <div class="hidden sm:block overflow-x-auto">
+                        <table class="w-full text-xs sm:text-sm text-left">
+                            <thead class="bg-stone-100 text-stone-600 font-bold">
+                                <tr>
+                                    <th class="p-2.5 rounded-l-lg">勾選</th>
+                                    <th class="p-2.5">類別</th>
+                                    <th class="p-2.5">菜單/項目名稱</th>
+                                    <th class="p-2.5">份量/容器</th>
+                                    <th class="p-2.5">盛盤</th>
+                                    <th class="p-2.5">前置處理與備註</th>
+                                    <th class="p-2.5 rounded-r-lg text-right">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="food-ambient-tbody" class="divide-y divide-stone-100" ondragover="handleFoodTbodyDragOver(event)" ondrop="handleFoodTbodyDrop(event, 'ambient')"></tbody>
+                        </table>
+                    </div>
+                    <div id="food-ambient-cards" class="sm:hidden space-y-2" ondragover="handleFoodTbodyDragOver(event)" ondrop="handleFoodTbodyDrop(event, 'ambient')"></div>
+                </div>
+
             </div>
 
-            <!-- Cooking Gear & Tableware -->
-            <div class="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="font-bold text-base sm:text-lg text-forest flex items-center">
-                        <i class="fa-solid fa-fire-burner text-rose-500 mr-2"></i> 烹調器具 & 餐具用品
-                    </h3>
-                    <span id="gear-cooking-count" class="badge-pill bg-rose-100 text-rose-800">0 項</span>
+            <!-- GROUP: 營地裝備 -->
+            <div id="checklist-group-gear" class="space-y-6">
+
+                <!-- Progress Bar & Actions Header -->
+                <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <span class="font-bold text-forest text-base sm:text-lg">⛺ 營地裝備進度 (Gear Progress)</span>
+                                <span id="gear-progress-percent" class="font-bold text-emerald-600 text-lg">0%</span>
+                            </div>
+                            <p class="text-xs text-stone-500">所有人新增、編輯或刪除裝備項目，畫面皆會即時同步。</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="openAddGearModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-1.5 rounded-xl text-xs sm:text-sm flex items-center shadow-sm transition-all">
+                                <i class="fa-solid fa-plus mr-1.5"></i> 新增裝備項目
+                            </button>
+                            <button onclick="resetGearItems()" title="重設為預設清單" class="bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold px-2.5 py-1.5 rounded-xl text-xs transition-all border border-stone-200">
+                                <i class="fa-solid fa-rotate-left"></i> 重設
+                            </button>
+                        </div>
+                    </div>
+                    <div class="w-full bg-stone-200 h-3 rounded-full overflow-hidden">
+                        <div id="gear-progress-bar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
                 </div>
-                <div class="hidden sm:block overflow-x-auto">
-                    <table class="w-full text-xs sm:text-sm text-left">
-                        <thead class="bg-stone-100 text-stone-600 font-bold">
-                            <tr>
-                                <th class="p-2.5 rounded-l-lg">勾選</th>
-                                <th class="p-2.5">類別</th>
-                                <th class="p-2.5">裝備項目名稱</th>
-                                <th class="p-2.5">數量</th>
-                                <th class="p-2.5">規格 / 檢核重點</th>
-                                <th class="p-2.5 rounded-r-lg text-right">操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="gear-cooking-tbody" class="divide-y divide-stone-100" ondragover="handleGearTbodyDragOver(event)" ondrop="handleGearTbodyDrop(event, 'cooking')"></tbody>
-                    </table>
+
+                <!-- Cooking Gear & Tableware -->
+                <div class="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-base sm:text-lg text-forest flex items-center">
+                            <i class="fa-solid fa-fire-burner text-rose-500 mr-2"></i> 烹調器具 & 餐具用品
+                        </h3>
+                        <span id="gear-cooking-count" class="badge-pill bg-rose-100 text-rose-800">0 項</span>
+                    </div>
+                    <div class="hidden sm:block overflow-x-auto">
+                        <table class="w-full text-xs sm:text-sm text-left">
+                            <thead class="bg-stone-100 text-stone-600 font-bold">
+                                <tr>
+                                    <th class="p-2.5 rounded-l-lg">勾選</th>
+                                    <th class="p-2.5">類別</th>
+                                    <th class="p-2.5">裝備項目名稱</th>
+                                    <th class="p-2.5">數量</th>
+                                    <th class="p-2.5">規格 / 檢核重點</th>
+                                    <th class="p-2.5 rounded-r-lg text-right">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gear-cooking-tbody" class="divide-y divide-stone-100" ondragover="handleGearTbodyDragOver(event)" ondrop="handleGearTbodyDrop(event, 'cooking')"></tbody>
+                        </table>
+                    </div>
+                    <div id="gear-cooking-cards" class="sm:hidden space-y-2" ondragover="handleGearTbodyDragOver(event)" ondrop="handleGearTbodyDrop(event, 'cooking')"></div>
                 </div>
-                <div id="gear-cooking-cards" class="sm:hidden space-y-2" ondragover="handleGearTbodyDragOver(event)" ondrop="handleGearTbodyDrop(event, 'cooking')"></div>
+
+                <!-- Kitchen Tools & Campsite Gear -->
+                <div class="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-base sm:text-lg text-forest flex items-center">
+                            <i class="fa-solid fa-utensils text-emerald-600 mr-2"></i> 廚房工具 & 營地生活裝備
+                        </h3>
+                        <span id="gear-kitchen-count" class="badge-pill bg-emerald-100 text-emerald-800">0 項</span>
+                    </div>
+                    <div class="hidden sm:block overflow-x-auto">
+                        <table class="w-full text-xs sm:text-sm text-left">
+                            <thead class="bg-stone-100 text-stone-600 font-bold">
+                                <tr>
+                                    <th class="p-2.5 rounded-l-lg">勾選</th>
+                                    <th class="p-2.5">類別</th>
+                                    <th class="p-2.5">裝備項目名稱</th>
+                                    <th class="p-2.5">數量</th>
+                                    <th class="p-2.5">規格 / 檢核重點</th>
+                                    <th class="p-2.5 rounded-r-lg text-right">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gear-kitchen-tbody" class="divide-y divide-stone-100" ondragover="handleGearTbodyDragOver(event)" ondrop="handleGearTbodyDrop(event, 'kitchen')"></tbody>
+                        </table>
+                    </div>
+                    <div id="gear-kitchen-cards" class="sm:hidden space-y-2" ondragover="handleGearTbodyDragOver(event)" ondrop="handleGearTbodyDrop(event, 'kitchen')"></div>
+                </div>
+
             </div>
 
-            <!-- Kitchen Tools & Campsite Gear -->
-            <div class="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="font-bold text-base sm:text-lg text-forest flex items-center">
-                        <i class="fa-solid fa-utensils text-emerald-600 mr-2"></i> 廚房工具 & 營地生活裝備
-                    </h3>
-                    <span id="gear-kitchen-count" class="badge-pill bg-emerald-100 text-emerald-800">0 項</span>
+            <!-- GROUP: 當天採買彙整 -->
+            <div id="checklist-group-shopping">
+                <div class="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                        <div>
+                            <h3 class="font-bold text-base sm:text-lg text-forest flex items-center">
+                                <i class="fa-solid fa-cart-shopping text-amber-600 mr-2"></i> 當天採購清單 (上營地前全聯採買)
+                            </h3>
+                            <p class="text-xs text-stone-500 mt-0.5">自動彙整食材清單與營地裝備中標示「當天採買」的項目，勾選會同步到各自的清單。</p>
+                        </div>
+                        <span id="shopping-progress-percent" class="font-bold text-emerald-600 text-lg shrink-0">0%</span>
+                    </div>
+                    <div class="w-full bg-stone-200 h-3 rounded-full overflow-hidden mb-3">
+                        <div id="shopping-progress-bar" class="bg-amber-500 h-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs sm:text-sm text-left">
+                            <thead class="bg-stone-100 text-stone-600 font-bold">
+                                <tr>
+                                    <th class="p-2.5 rounded-l-lg">勾選</th>
+                                    <th class="p-2.5">項目</th>
+                                    <th class="p-2.5">類別</th>
+                                    <th class="p-2.5">數量</th>
+                                    <th class="p-2.5 rounded-r-lg">來源清單</th>
+                                </tr>
+                            </thead>
+                            <tbody id="shopping-list-tbody" class="divide-y divide-stone-100"></tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="hidden sm:block overflow-x-auto">
-                    <table class="w-full text-xs sm:text-sm text-left">
-                        <thead class="bg-stone-100 text-stone-600 font-bold">
-                            <tr>
-                                <th class="p-2.5 rounded-l-lg">勾選</th>
-                                <th class="p-2.5">類別</th>
-                                <th class="p-2.5">裝備項目名稱</th>
-                                <th class="p-2.5">數量</th>
-                                <th class="p-2.5">規格 / 檢核重點</th>
-                                <th class="p-2.5 rounded-r-lg text-right">操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="gear-kitchen-tbody" class="divide-y divide-stone-100" ondragover="handleGearTbodyDragOver(event)" ondrop="handleGearTbodyDrop(event, 'kitchen')"></tbody>
-                    </table>
-                </div>
-                <div id="gear-kitchen-cards" class="sm:hidden space-y-2" ondragover="handleGearTbodyDragOver(event)" ondrop="handleGearTbodyDrop(event, 'kitchen')"></div>
             </div>
 
         </section>
@@ -1075,7 +1135,7 @@
     <script>
         // TAB SWITCHING LOGIC
         function switchTab(tabName) {
-            const sections = ['info', 'schedule', 'menu', 'personal', 'foodlist', 'gearlist', 'split'];
+            const sections = ['info', 'schedule', 'menu', 'personal', 'checklist', 'split'];
             sections.forEach(s => {
                 const el = document.getElementById('sec-' + s);
                 const btn = document.getElementById('tab-' + s);
@@ -1087,6 +1147,25 @@
             const targetBtn = document.getElementById('tab-' + tabName);
             if(targetEl) targetEl.classList.remove('hidden');
             if(targetBtn) targetBtn.classList.add('active');
+        }
+
+        // CHECKLIST FILTER (食材/裝備/當天採買 整合頁籤內切換)
+        let checklistFilter = 'all';
+        function setChecklistFilter(filter) {
+            checklistFilter = filter;
+
+            const groups = { food: 'checklist-group-food', gear: 'checklist-group-gear', shopping: 'checklist-group-shopping' };
+            Object.keys(groups).forEach(key => {
+                const el = document.getElementById(groups[key]);
+                if (!el) return;
+                const visible = filter === 'all' || filter === key;
+                el.classList.toggle('hidden', !visible);
+            });
+
+            ['all', 'food', 'gear', 'shopping'].forEach(key => {
+                const pill = document.getElementById('checklist-filter-' + key);
+                if (pill) pill.classList.toggle('active', key === filter);
+            });
         }
 
         // NAV BAR SCROLL HINT (fade edges show when there's more to scroll)
@@ -1510,6 +1589,7 @@
             if (ambientCount) ambientCount.innerText = ambientItems.length + ' 項';
 
             updateFoodProgress();
+            renderShoppingList();
         }
 
         function toggleFoodChecked(id) {
@@ -1667,7 +1747,7 @@
 
         // PROGRESS FOR FOOD & GEAR
         function updateFoodProgress() {
-            const checkboxes = document.querySelectorAll('#sec-foodlist input[type="checkbox"]');
+            const checkboxes = document.querySelectorAll('#checklist-group-food input[type="checkbox"]');
             let checkedCount = 0;
             checkboxes.forEach(chk => {
                 if(chk.checked) checkedCount++;
@@ -1678,7 +1758,7 @@
         }
 
         function updateGearProgress() {
-            const checkboxes = document.querySelectorAll('#sec-gearlist input[type="checkbox"]');
+            const checkboxes = document.querySelectorAll('#checklist-group-gear input[type="checkbox"]');
             let checkedCount = 0;
             checkboxes.forEach(chk => {
                 if(chk.checked) checkedCount++;
@@ -1822,6 +1902,49 @@
             if (kitchenCount) kitchenCount.innerText = kitchenItems.length + ' 項';
 
             updateGearProgress();
+            renderShoppingList();
+        }
+
+        // ==========================================
+        // DAY-OF SHOPPING LIST (aggregated from food & gear items marked 當天採買)
+        // ==========================================
+        function renderShoppingList() {
+            const tbody = document.getElementById('shopping-list-tbody');
+            if (!tbody) return;
+
+            const foodBuyItems = foodItems
+                .filter(i => (i.note || '').includes('當天'))
+                .map(i => ({ ...i, source: 'food', sourceLabel: '食材清單' }));
+            const gearBuyItems = gearItems
+                .filter(i => (i.note || '').includes('當天'))
+                .map(i => ({ ...i, source: 'gear', sourceLabel: '營地裝備' }));
+            const combined = [...foodBuyItems, ...gearBuyItems];
+
+            tbody.innerHTML = combined.length ? combined.map(item => {
+                const color = item.source === 'food'
+                    ? (FOOD_CATEGORY_COLORS[item.category] || 'stone')
+                    : (GEAR_CATEGORY_COLORS[item.category] || 'stone');
+                const toggleFn = item.source === 'food' ? 'toggleFoodChecked' : 'toggleGearChecked';
+                const sourceBadge = item.source === 'food' ? 'bg-emerald-100 text-emerald-800' : 'bg-indigo-100 text-indigo-800';
+                const nameClass = item.checked ? 'font-bold line-through text-stone-400' : 'font-bold';
+                return `
+                    <tr class="hover:bg-stone-50">
+                        <td class="p-2.5 cursor-pointer" onclick="${toggleFn}(${item.id})"><input type="checkbox" ${item.checked ? 'checked' : ''} class="checkbox-custom w-4 h-4 text-emerald-600 rounded pointer-events-none"></td>
+                        <td class="p-2.5 ${nameClass}">${item.name}</td>
+                        <td class="p-2.5"><span class="badge-pill bg-${color}-100 text-${color}-800">${item.category}</span></td>
+                        <td class="p-2.5 text-stone-600">${item.qty || '-'}</td>
+                        <td class="p-2.5"><span class="badge-pill ${sourceBadge}">${item.sourceLabel}</span></td>
+                    </tr>
+                `;
+            }).join('') : `<tr><td colspan="5" class="p-4 text-center text-stone-400 text-xs">目前沒有標示「當天採買」的項目</td></tr>`;
+
+            const total = combined.length;
+            const checkedCount = combined.filter(i => i.checked).length;
+            const percent = total ? Math.round((checkedCount / total) * 100) : 0;
+            const bar = document.getElementById('shopping-progress-bar');
+            const pct = document.getElementById('shopping-progress-percent');
+            if (bar) bar.style.width = percent + '%';
+            if (pct) pct.innerText = percent + '%';
         }
 
         function toggleGearChecked(id) {
