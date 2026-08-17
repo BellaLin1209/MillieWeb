@@ -691,12 +691,11 @@
                     </h3>
                     <span id="food-cold-count" class="badge-pill bg-blue-100 text-blue-800">0 項</span>
                 </div>
-                <div class="overflow-x-auto">
+                <div class="hidden sm:block overflow-x-auto">
                     <table class="w-full text-xs sm:text-sm text-left">
                         <thead class="bg-stone-100 text-stone-600 font-bold">
                             <tr>
-                                <th class="p-2.5 rounded-l-lg w-8"></th>
-                                <th class="p-2.5">勾選</th>
+                                <th class="p-2.5 rounded-l-lg">勾選</th>
                                 <th class="p-2.5">類別</th>
                                 <th class="p-2.5">菜單/食材名稱</th>
                                 <th class="p-2.5">份量/容器</th>
@@ -708,6 +707,7 @@
                         <tbody id="food-cold-tbody" class="divide-y divide-stone-100" ondragover="handleFoodTbodyDragOver(event)" ondrop="handleFoodTbodyDrop(event, 'cold')"></tbody>
                     </table>
                 </div>
+                <div id="food-cold-cards" class="sm:hidden space-y-2" ondragover="handleFoodTbodyDragOver(event)" ondrop="handleFoodTbodyDrop(event, 'cold')"></div>
             </div>
 
             <!-- Ambient Dry Goods -->
@@ -718,12 +718,11 @@
                     </h3>
                     <span id="food-ambient-count" class="badge-pill bg-amber-100 text-amber-800">0 項</span>
                 </div>
-                <div class="overflow-x-auto">
+                <div class="hidden sm:block overflow-x-auto">
                     <table class="w-full text-xs sm:text-sm text-left">
                         <thead class="bg-stone-100 text-stone-600 font-bold">
                             <tr>
-                                <th class="p-2.5 rounded-l-lg w-8"></th>
-                                <th class="p-2.5">勾選</th>
+                                <th class="p-2.5 rounded-l-lg">勾選</th>
                                 <th class="p-2.5">類別</th>
                                 <th class="p-2.5">菜單/項目名稱</th>
                                 <th class="p-2.5">份量/容器</th>
@@ -735,6 +734,7 @@
                         <tbody id="food-ambient-tbody" class="divide-y divide-stone-100" ondragover="handleFoodTbodyDragOver(event)" ondrop="handleFoodTbodyDrop(event, 'ambient')"></tbody>
                     </table>
                 </div>
+                <div id="food-ambient-cards" class="sm:hidden space-y-2" ondragover="handleFoodTbodyDragOver(event)" ondrop="handleFoodTbodyDrop(event, 'ambient')"></div>
             </div>
 
         </section>
@@ -1564,11 +1564,10 @@
                 : `<span class="text-stone-400">-</span>`;
             const noteClass = isBuyDay ? 'text-stone-600 font-bold text-amber-700' : 'text-stone-600';
             return `
-                <tr class="hover:bg-stone-50 transition-colors" data-food-id="${item.id}" draggable="true" ondragstart="handleFoodDragStart(event, ${item.id})" ondragend="handleFoodDragEnd(event)">
-                    <td class="p-2.5 text-stone-300 hover:text-stone-500 cursor-grab active:cursor-grabbing" title="拖曳排序"><i class="fa-solid fa-grip-vertical"></i></td>
-                    <td class="p-2.5"><input type="checkbox" id="food_${item.id}" ${item.checked ? 'checked' : ''} onchange="toggleFoodChecked(${item.id})" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                <tr class="hover:bg-stone-50 transition-colors cursor-grab active:cursor-grabbing" data-food-id="${item.id}" draggable="true" ondragstart="handleFoodDragStart(event, ${item.id})" ondragend="handleFoodDragEnd(event)">
+                    <td class="p-2.5 cursor-pointer" onclick="toggleFoodChecked(${item.id})"><input type="checkbox" ${item.checked ? 'checked' : ''} class="checkbox-custom w-4 h-4 text-emerald-600 rounded pointer-events-none"></td>
                     <td class="p-2.5"><span class="badge-pill bg-${color}-100 text-${color}-800">${item.category}</span></td>
-                    <td class="p-2.5 font-bold"><label for="food_${item.id}" class="cursor-pointer">${item.name}</label></td>
+                    <td class="p-2.5 font-bold">${item.name}</td>
                     <td class="p-2.5 text-stone-600">${item.qty || '-'}</td>
                     <td class="p-2.5">${plateHtml}</td>
                     <td class="p-2.5 ${noteClass}">${item.note || '-'}</td>
@@ -1580,22 +1579,49 @@
             `;
         }
 
+        function renderFoodCard(item) {
+            const color = FOOD_CATEGORY_COLORS[item.category] || "stone";
+            const isBuyDay = (item.note || '').includes('當天');
+            const noteClass = isBuyDay ? 'font-bold text-amber-700' : 'text-stone-500';
+            const metaBits = [item.qty, (item.plate && item.plate !== '-') ? item.plate : null].filter(Boolean).join(' · ');
+            return `
+                <div class="border border-stone-100 rounded-xl p-3 active:cursor-grabbing" data-food-id="${item.id}" draggable="true" ondragstart="handleFoodDragStart(event, ${item.id})" ondragend="handleFoodDragEnd(event)">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="flex items-start gap-2.5 flex-1 min-w-0 cursor-pointer" onclick="toggleFoodChecked(${item.id})">
+                            <input type="checkbox" ${item.checked ? 'checked' : ''} class="checkbox-custom w-4 h-4 mt-0.5 text-emerald-600 rounded pointer-events-none shrink-0">
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="font-bold text-sm text-stone-800 break-words">${item.name}</span>
+                                    <span class="badge-pill bg-${color}-100 text-${color}-800 text-[10px] shrink-0">${item.category}</span>
+                                </div>
+                                ${metaBits ? `<div class="text-xs text-stone-500 mt-0.5">${metaBits}</div>` : ''}
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1 shrink-0">
+                            <button onclick="openEditFoodModal(${item.id})" title="編輯" class="text-stone-400 hover:text-emerald-600 p-1.5 rounded-lg hover:bg-emerald-50 text-xs"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteFoodItem(${item.id})" title="刪除" class="text-stone-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 text-xs"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    </div>
+                    ${item.note && item.note !== '-' ? `<div class="text-xs ${noteClass} mt-1.5 pl-[26px] break-words">${item.note}</div>` : ''}
+                </div>
+            `;
+        }
+
         function renderFoodItems() {
             const coldItems = foodItems.filter(i => i.section === 'cold');
             const ambientItems = foodItems.filter(i => i.section === 'ambient');
+            const emptyRow = `<tr><td colspan="7" class="p-4 text-center text-stone-400 text-xs">尚無項目，請點擊上方「新增食材項目」</td></tr>`;
+            const emptyCard = `<div class="p-4 text-center text-stone-400 text-xs">尚無項目，請點擊上方「新增食材項目」</div>`;
 
             const coldTbody = document.getElementById('food-cold-tbody');
             const ambientTbody = document.getElementById('food-ambient-tbody');
-            if (coldTbody) {
-                coldTbody.innerHTML = coldItems.length
-                    ? coldItems.map(renderFoodRow).join('')
-                    : `<tr><td colspan="8" class="p-4 text-center text-stone-400 text-xs">尚無項目，請點擊上方「新增食材項目」</td></tr>`;
-            }
-            if (ambientTbody) {
-                ambientTbody.innerHTML = ambientItems.length
-                    ? ambientItems.map(renderFoodRow).join('')
-                    : `<tr><td colspan="8" class="p-4 text-center text-stone-400 text-xs">尚無項目，請點擊上方「新增食材項目」</td></tr>`;
-            }
+            const coldCards = document.getElementById('food-cold-cards');
+            const ambientCards = document.getElementById('food-ambient-cards');
+
+            if (coldTbody) coldTbody.innerHTML = coldItems.length ? coldItems.map(renderFoodRow).join('') : emptyRow;
+            if (ambientTbody) ambientTbody.innerHTML = ambientItems.length ? ambientItems.map(renderFoodRow).join('') : emptyRow;
+            if (coldCards) coldCards.innerHTML = coldItems.length ? coldItems.map(renderFoodCard).join('') : emptyCard;
+            if (ambientCards) ambientCards.innerHTML = ambientItems.length ? ambientItems.map(renderFoodCard).join('') : emptyCard;
 
             const coldCount = document.getElementById('food-cold-count');
             const ambientCount = document.getElementById('food-ambient-count');
@@ -1632,7 +1658,7 @@
         function handleFoodTbodyDragOver(e) {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
-            const row = e.target.closest('tr[data-food-id]');
+            const row = e.target.closest('[data-food-id]');
             document.querySelectorAll('.food-drag-over').forEach(el => el.classList.remove('food-drag-over', 'bg-emerald-50'));
             if (row && Number(row.dataset.foodId) !== draggedFoodId) {
                 row.classList.add('food-drag-over', 'bg-emerald-50');
@@ -1644,7 +1670,7 @@
             document.querySelectorAll('.food-drag-over').forEach(el => el.classList.remove('food-drag-over', 'bg-emerald-50'));
             if (draggedFoodId === null) return;
 
-            const targetRow = e.target.closest('tr[data-food-id]');
+            const targetRow = e.target.closest('[data-food-id]');
             const targetId = targetRow ? Number(targetRow.dataset.foodId) : null;
             if (targetId === draggedFoodId) { draggedFoodId = null; return; }
 
@@ -1720,15 +1746,28 @@
                     item.note = note;
                 }
             } else {
-                foodItems.push({
+                const newItem = {
                     id: Date.now(),
                     section, category, name, qty, plate, note,
                     checked: false
-                });
+                };
+                foodItems.splice(getFoodCategoryInsertIndex(section, category), 0, newItem);
             }
 
             saveFoodItems();
             closeFoodModal();
+        }
+
+        function getFoodCategoryInsertIndex(section, category) {
+            let lastCategoryIndex = -1;
+            let lastSectionIndex = -1;
+            foodItems.forEach((it, idx) => {
+                if (it.section === section) {
+                    lastSectionIndex = idx;
+                    if (it.category === category) lastCategoryIndex = idx;
+                }
+            });
+            return (lastCategoryIndex !== -1 ? lastCategoryIndex : lastSectionIndex) + 1;
         }
 
         function deleteFoodItem(id) {
