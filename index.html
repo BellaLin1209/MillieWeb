@@ -658,14 +658,25 @@
         <!-- TAB 5: 食材與餐食 CHECKLIST (FOODLIST) -->
         <section id="sec-foodlist" class="hidden space-y-6">
             
-            <!-- Progress Bar -->
+            <!-- Progress Bar & Actions Header -->
             <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="font-bold text-forest flex items-center gap-2">
-                        🍱 食材準備進度 (Food Progress)
-                        <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">即時同步</span>
-                    </span>
-                    <span id="food-progress-percent" class="font-bold text-emerald-600 text-lg">0%</span>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-bold text-forest text-base sm:text-lg">🍱 食材準備進度 (Food Progress)</span>
+                            <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">即時同步</span>
+                            <span id="food-progress-percent" class="font-bold text-emerald-600 text-lg">0%</span>
+                        </div>
+                        <p class="text-xs text-stone-500">所有人新增、編輯或刪除食材項目，畫面皆會即時同步。</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="openAddFoodModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-1.5 rounded-xl text-xs sm:text-sm flex items-center shadow-sm transition-all">
+                            <i class="fa-solid fa-plus mr-1.5"></i> 新增食材項目
+                        </button>
+                        <button onclick="resetFoodItems()" title="重設為預設清單" class="bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold px-2.5 py-1.5 rounded-xl text-xs transition-all border border-stone-200">
+                            <i class="fa-solid fa-rotate-left"></i> 重設
+                        </button>
+                    </div>
                 </div>
                 <div class="w-full bg-stone-200 h-3 rounded-full overflow-hidden">
                     <div id="food-progress-bar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 0%"></div>
@@ -678,126 +689,23 @@
                     <h3 class="font-bold text-base sm:text-lg text-forest flex items-center">
                         <i class="fa-solid fa-snowflake text-blue-500 mr-2"></i> 冷藏 / 保冷袋分區 (需低溫控溫)
                     </h3>
-                    <span class="badge-pill bg-blue-100 text-blue-800">11 項</span>
+                    <span id="food-cold-count" class="badge-pill bg-blue-100 text-blue-800">0 項</span>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-xs sm:text-sm text-left">
                         <thead class="bg-stone-100 text-stone-600 font-bold">
                             <tr>
-                                <th class="p-2.5 rounded-l-lg">勾選</th>
+                                <th class="p-2.5 rounded-l-lg w-8"></th>
+                                <th class="p-2.5">勾選</th>
                                 <th class="p-2.5">類別</th>
                                 <th class="p-2.5">菜單/食材名稱</th>
                                 <th class="p-2.5">份量/容器</th>
                                 <th class="p-2.5">盛盤</th>
-                                <th class="p-2.5 rounded-r-lg">前置處理與備註</th>
+                                <th class="p-2.5">前置處理與備註</th>
+                                <th class="p-2.5 rounded-r-lg text-right">操作</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-stone-100">
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f1" onchange="syncCheckState('food', 'f1', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-amber-100 text-amber-800">飲品</span></td>
-                                <td class="p-2.5 font-bold"><label for="f1" class="cursor-pointer">百香果冰角</label></td>
-                                <td class="p-2.5 text-stone-600">數個 / -</td>
-                                <td class="p-2.5 text-stone-400">-</td>
-                                <td class="p-2.5 text-stone-600">保冷袋打包（冷凍攜帶）</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f2" onchange="syncCheckState('food', 'f2', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-amber-100 text-amber-800">飲品</span></td>
-                                <td class="p-2.5 font-bold"><label for="f2" class="cursor-pointer">檸檬冰角</label></td>
-                                <td class="p-2.5 text-stone-600">數個 / -</td>
-                                <td class="p-2.5 text-stone-400">-</td>
-                                <td class="p-2.5 text-stone-600">保冷袋打包（冷凍攜帶）</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f3" onchange="syncCheckState('food', 'f3', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-amber-100 text-amber-800">飲品</span></td>
-                                <td class="p-2.5 font-bold"><label for="f3" class="cursor-pointer">濃縮糖水</label></td>
-                                <td class="p-2.5 text-stone-600">分裝少許 / 小寶特瓶</td>
-                                <td class="p-2.5 text-stone-400">-</td>
-                                <td class="p-2.5 text-stone-600">仙草調味用，保冷袋打包</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f4" onchange="syncCheckState('food', 'f4', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-amber-100 text-amber-800">飲品</span></td>
-                                <td class="p-2.5 font-bold text-blue-700"><label for="f4" class="cursor-pointer">食用冰塊</label></td>
-                                <td class="p-2.5 text-stone-600">1 包 / -</td>
-                                <td class="p-2.5 text-stone-400">-</td>
-                                <td class="p-2.5 text-stone-600 font-bold text-amber-700">當天上營地前全聯採買，保冷袋打包</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f5" onchange="syncCheckState('food', 'f5', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">甜品</span></td>
-                                <td class="p-2.5 font-bold text-blue-700"><label for="f5" class="cursor-pointer">仙草</label></td>
-                                <td class="p-2.5 text-stone-600">1 份 / -</td>
-                                <td class="p-2.5 text-stone-400">-</td>
-                                <td class="p-2.5 text-stone-600 font-bold text-amber-700">當天上營地前全聯採買，保冷袋打包</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f6" onchange="syncCheckState('food', 'f6', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-rose-100 text-rose-800">大人主食</span></td>
-                                <td class="p-2.5 font-bold"><label for="f6" class="cursor-pointer">醃小黃瓜</label></td>
-                                <td class="p-2.5 text-stone-600">1 盒 / 小正方保鮮盒</td>
-                                <td class="p-2.5 text-stone-400">-</td>
-                                <td class="p-2.5 text-stone-600">前一天 D-1 醃漬冷藏</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f7" onchange="syncCheckState('food', 'f7', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-rose-100 text-rose-800">大人主食</span></td>
-                                <td class="p-2.5 font-bold"><label for="f7" class="cursor-pointer">醃豆芽菜金針菇</label></td>
-                                <td class="p-2.5 text-stone-600">1 盒 / 小正方保鮮盒</td>
-                                <td class="p-2.5 text-stone-400">-</td>
-                                <td class="p-2.5 text-stone-600">前一天 D-1 醃漬冷藏</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f8" onchange="syncCheckState('food', 'f8', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-rose-100 text-rose-800">大人主食</span></td>
-                                <td class="p-2.5 font-bold text-rose-700"><label for="f8" class="cursor-pointer">韓式烤肉（辣）</label></td>
-                                <td class="p-2.5 text-stone-600">6 條 / 大長方保鮮盒</td>
-                                <td class="p-2.5 text-stone-800 font-medium">大盤 1</td>
-                                <td class="p-2.5 text-stone-600">前一天 D-1 醃肉冷凍；現場退冰現煎</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f9" onchange="syncCheckState('food', 'f9', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-rose-100 text-rose-800">大人主食</span></td>
-                                <td class="p-2.5 font-bold"><label for="f9" class="cursor-pointer">白飯</label></td>
-                                <td class="p-2.5 text-stone-600">3 人份 / 大保鮮袋</td>
-                                <td class="p-2.5 text-stone-800 font-medium">大盤 2</td>
-                                <td class="p-2.5 text-stone-600">前一天 D-1 煮熟冷藏分裝</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f10" onchange="syncCheckState('food', 'f10', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-rose-100 text-rose-800">大人主食</span></td>
-                                <td class="p-2.5 font-bold"><label for="f10" class="cursor-pointer">泡菜</label></td>
-                                <td class="p-2.5 text-stone-600">1 罐 / 原裝</td>
-                                <td class="p-2.5 text-stone-800 font-medium">小碗 1</td>
-                                <td class="p-2.5 text-stone-600 font-bold text-amber-700">當天上營地前全聯採買</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f11" onchange="syncCheckState('food', 'f11', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-rose-100 text-rose-800">大人主食</span></td>
-                                <td class="p-2.5 font-bold text-rose-700"><label for="f11" class="cursor-pointer">蝦鬆 (萬爸特製)</label></td>
-                                <td class="p-2.5 text-stone-600">1 份 / 中長方保鮮盒</td>
-                                <td class="p-2.5 text-stone-800 font-medium">中盤 1</td>
-                                <td class="p-2.5 text-stone-600">前一天 D-1 預炒料理冷藏</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f12" onchange="syncCheckState('food', 'f12', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-orange-100 text-orange-800">小孩主食</span></td>
-                                <td class="p-2.5 font-bold text-orange-700"><label for="f12" class="cursor-pointer">奶油鮭魚炒飯</label></td>
-                                <td class="p-2.5 text-stone-600">6 人份 / 大保鮮袋</td>
-                                <td class="p-2.5 text-stone-800 font-medium">大盤 4</td>
-                                <td class="p-2.5 text-stone-600">前一天 D-1 預先炒好冷藏，現場翻炒回溫</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f13" onchange="syncCheckState('food', 'f13', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-orange-100 text-orange-800">小孩主食</span></td>
-                                <td class="p-2.5 font-bold text-orange-700"><label for="f13" class="cursor-pointer">迷你披薩</label></td>
-                                <td class="p-2.5 text-stone-600">10 個 / 大保鮮袋</td>
-                                <td class="p-2.5 text-stone-800 font-medium">大盤 5</td>
-                                <td class="p-2.5 text-stone-600">前一天 D-1 製作/分裝，現場煎烤加熱</td>
-                            </tr>
-                        </tbody>
+                        <tbody id="food-cold-tbody" class="divide-y divide-stone-100" ondragover="handleFoodTbodyDragOver(event)" ondrop="handleFoodTbodyDrop(event, 'cold')"></tbody>
                     </table>
                 </div>
             </div>
@@ -808,86 +716,23 @@
                     <h3 class="font-bold text-base sm:text-lg text-forest flex items-center">
                         <i class="fa-solid fa-box-open text-amber-500 mr-2"></i> 常溫裝箱分區 (乾貨、調味與耗材)
                     </h3>
-                    <span class="badge-pill bg-amber-100 text-amber-800">10 項</span>
+                    <span id="food-ambient-count" class="badge-pill bg-amber-100 text-amber-800">0 項</span>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-xs sm:text-sm text-left">
                         <thead class="bg-stone-100 text-stone-600 font-bold">
                             <tr>
-                                <th class="p-2.5 rounded-l-lg">勾選</th>
+                                <th class="p-2.5 rounded-l-lg w-8"></th>
+                                <th class="p-2.5">勾選</th>
                                 <th class="p-2.5">類別</th>
                                 <th class="p-2.5">菜單/項目名稱</th>
                                 <th class="p-2.5">份量/容器</th>
                                 <th class="p-2.5">盛盤</th>
-                                <th class="p-2.5 rounded-r-lg">前置處理與備註</th>
+                                <th class="p-2.5">前置處理與備註</th>
+                                <th class="p-2.5 rounded-r-lg text-right">操作</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-stone-100">
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f15" onchange="syncCheckState('food', 'f15', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-amber-100 text-amber-800">飲品</span></td>
-                                <td class="p-2.5 font-bold"><label for="f15" class="cursor-pointer">蜂蜜</label></td>
-                                <td class="p-2.5 text-stone-600">分裝少許 / 小寶特瓶</td>
-                                <td class="p-2.5 text-stone-400">-</td>
-                                <td class="p-2.5 text-stone-600">前一天 D-1分裝，搭配冰角特調用</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f16" onchange="syncCheckState('food', 'f16', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-amber-100 text-amber-800">飲品</span></td>
-                                <td class="p-2.5 font-bold"><label for="f16" class="cursor-pointer">可爾必思濃縮</label></td>
-                                <td class="p-2.5 text-stone-600">1 瓶 / 原瓶裝</td>
-                                <td class="p-2.5 text-stone-400">-</td>
-                                <td class="p-2.5 text-stone-600">常溫攜帶，飲品調製基底</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f17" onchange="syncCheckState('food', 'f17', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-amber-100 text-amber-800">飲品</span></td>
-                                <td class="p-2.5 font-bold"><label for="f17" class="cursor-pointer">飲料壺</label></td>
-                                <td class="p-2.5 text-stone-600">1 個 / -</td>
-                                <td class="p-2.5 text-stone-400">-</td>
-                                <td class="p-2.5 text-stone-600">特調飲品/氣泡水混調盛裝用</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f18" onchange="syncCheckState('food', 'f18', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-emerald-100 text-emerald-800">大人主食</span></td>
-                                <td class="p-2.5 font-bold text-emerald-800"><label for="f18" class="cursor-pointer">美生菜</label></td>
-                                <td class="p-2.5 text-stone-600">1 顆 / 大保鮮袋</td>
-                                <td class="p-2.5 text-stone-800 font-medium">大盤 3</td>
-                                <td class="p-2.5 text-stone-600 font-medium">前一天 D-1洗淨瀝乾，鋪紙巾吸水保持爽脆</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f19" onchange="syncCheckState('food', 'f19', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">調味料</span></td>
-                                <td class="p-2.5 font-bold"><label for="f19" class="cursor-pointer">鹽</label></td>
-                                <td class="p-2.5 text-stone-600">少許 / 小醬料盒</td>
-                                <td class="p-2.5 text-stone-400">-</td>
-                                <td class="p-2.5 text-stone-600">炒飯與食材現場調味備用</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f20" onchange="syncCheckState('food', 'f20', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">調味料</span></td>
-                                <td class="p-2.5 font-bold"><label for="f20" class="cursor-pointer">胡椒</label></td>
-                                <td class="p-2.5 text-stone-600">少許 / 小醬料盒</td>
-                                <td class="p-2.5 text-stone-400">-</td>
-                                <td class="p-2.5 text-stone-600">煎烤肉類與食材調味備用</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f21" onchange="syncCheckState('food', 'f21', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">調味料</span></td>
-                                <td class="p-2.5 font-bold"><label for="f21" class="cursor-pointer">香料粉</label></td>
-                                <td class="p-2.5 text-stone-600">少許 / 小醬料盒</td>
-                                <td class="p-2.5 text-stone-400">-</td>
-                                <td class="p-2.5 text-stone-600">烤肉/披薩/炒飯增添風味</td>
-                            </tr>
-                            <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f22" onchange="syncCheckState('food', 'f22', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
-                                <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">調味料</span></td>
-                                <td class="p-2.5 font-bold"><label for="f22" class="cursor-pointer">黑糖</label></td>
-                                <td class="p-2.5 text-stone-600">1 份 / 小分裝袋</td>
-                                <td class="p-2.5 text-stone-400">-</td>
-                                <td class="p-2.5 text-stone-600">甜品/仙草調味備用</td>
-                            </tr>
-                        </tbody>
+                        <tbody id="food-ambient-tbody" class="divide-y divide-stone-100" ondragover="handleFoodTbodyDragOver(event)" ondrop="handleFoodTbodyDrop(event, 'ambient')"></tbody>
                     </table>
                 </div>
             </div>
@@ -1298,6 +1143,56 @@
         </div>
     </div>
 
+    <!-- Modal for Adding/Editing Food Item -->
+    <div id="food-modal" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-stone-200">
+            <h3 id="food-modal-title" class="font-bold text-lg text-forest mb-4">新增食材項目</h3>
+
+            <div class="space-y-3.5 text-sm">
+                <div>
+                    <label class="block text-xs font-bold text-stone-600 mb-1">存放分區</label>
+                    <select id="food-input-section" class="w-full border border-stone-300 rounded-xl p-2.5 bg-stone-50 focus:outline-emerald-600 text-stone-800">
+                        <option value="cold">冷藏 / 保冷袋分區</option>
+                        <option value="ambient">常溫裝箱分區</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-600 mb-1">類別</label>
+                    <select id="food-input-category" class="w-full border border-stone-300 rounded-xl p-2.5 bg-stone-50 focus:outline-emerald-600 text-stone-800">
+                        <option value="飲品">飲品</option>
+                        <option value="甜品">甜品</option>
+                        <option value="大人主食">大人主食</option>
+                        <option value="小孩主食">小孩主食</option>
+                        <option value="調味料">調味料</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-600 mb-1">菜單/食材名稱</label>
+                    <input type="text" id="food-input-name" placeholder="例如：白飯、烤肉醬" class="w-full border border-stone-300 rounded-xl p-2.5 bg-stone-50 focus:outline-emerald-600 text-stone-800">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-stone-600 mb-1">份量/容器</label>
+                        <input type="text" id="food-input-qty" placeholder="例如：1 份 / 保鮮盒" class="w-full border border-stone-300 rounded-xl p-2.5 bg-stone-50 focus:outline-emerald-600 text-stone-800">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-stone-600 mb-1">盛盤</label>
+                        <input type="text" id="food-input-plate" placeholder="例如：大盤 1（無則留白）" class="w-full border border-stone-300 rounded-xl p-2.5 bg-stone-50 focus:outline-emerald-600 text-stone-800">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-600 mb-1">前置處理與備註</label>
+                    <input type="text" id="food-input-note" placeholder="例如：前一天 D-1 醃漬冷藏" class="w-full border border-stone-300 rounded-xl p-2.5 bg-stone-50 focus:outline-emerald-600 text-stone-800">
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-2 mt-6">
+                <button onclick="closeFoodModal()" class="px-4 py-2 text-stone-500 hover:text-stone-700 text-sm font-medium">取消</button>
+                <button onclick="saveFoodModalItem()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition-all">儲存項目</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="mt-12 text-center text-xs text-stone-400 py-6 border-t border-stone-200">
         <p>🏕️ 2026 藍鵲露營車兩天一夜親子遊 • 祝大家玩得超盡興！</p>
@@ -1325,12 +1220,11 @@
         // FIREBASE REALTIME SYNC HANDLERS
         // ==========================================
 
-        // 食材與裝備 Checkbox 點擊寫入雲端
+        // 裝備 Checkbox 點擊寫入雲端 (食材項目改由 saveFoodItems() 整批同步)
         function syncCheckState(type, id, checked) {
             if (window.firebaseDB && window.fbRef && window.fbSet) {
                 window.fbSet(window.fbRef(window.firebaseDB, `camping_${type}/${id}`), checked);
             }
-            if (type === 'food') updateFoodProgress();
             if (type === 'gear') updateGearProgress();
         }
 
@@ -1338,15 +1232,11 @@
             if (!window.firebaseDB) return;
 
             // 1. 監聽食材清單
-            const foodRef = window.fbRef(window.firebaseDB, 'camping_food');
-            window.fbOnValue(foodRef, (snap) => {
-                const data = snap.val() || {};
-                document.querySelectorAll('#sec-foodlist input[type="checkbox"]').forEach(chk => {
-                    if (data[chk.id] !== undefined) {
-                        chk.checked = !!data[chk.id];
-                    }
-                });
-                updateFoodProgress();
+            const foodItemsRef = window.fbRef(window.firebaseDB, 'camping_food_items');
+            window.fbOnValue(foodItemsRef, (snap) => {
+                const data = snap.val();
+                foodItems = data && data.length ? data : JSON.parse(JSON.stringify(DEFAULT_FOOD_ITEMS));
+                renderFoodItems();
             });
 
             // 2. 監聽營地裝備
@@ -1603,6 +1493,256 @@
             const percent = Math.round((checkedCount / personalItems.length) * 100);
             document.getElementById('personal-progress-bar').style.width = percent + '%';
             document.getElementById('personal-progress-percent').innerText = percent + '%';
+        }
+
+        // ==========================================
+        // DYNAMIC FOOD LIST MANAGEMENT (Firebase realtime, localStorage fallback)
+        // ==========================================
+        const DEFAULT_FOOD_ITEMS = [
+            { id: 1, section: "cold", category: "飲品", name: "百香果冰角", qty: "數個 / -", plate: "-", note: "保冷袋打包（冷凍攜帶）", checked: false },
+            { id: 2, section: "cold", category: "飲品", name: "檸檬冰角", qty: "數個 / -", plate: "-", note: "保冷袋打包（冷凍攜帶）", checked: false },
+            { id: 3, section: "cold", category: "飲品", name: "濃縮糖水", qty: "分裝少許 / 小寶特瓶", plate: "-", note: "仙草調味用，保冷袋打包", checked: false },
+            { id: 4, section: "cold", category: "飲品", name: "食用冰塊", qty: "1 包 / -", plate: "-", note: "當天上營地前全聯採買，保冷袋打包", checked: false },
+            { id: 5, section: "cold", category: "甜品", name: "仙草", qty: "1 份 / -", plate: "-", note: "當天上營地前全聯採買，保冷袋打包", checked: false },
+            { id: 6, section: "cold", category: "大人主食", name: "醃小黃瓜", qty: "1 盒 / 小正方保鮮盒", plate: "-", note: "前一天 D-1 醃漬冷藏", checked: false },
+            { id: 7, section: "cold", category: "大人主食", name: "醃豆芽菜金針菇", qty: "1 盒 / 小正方保鮮盒", plate: "-", note: "前一天 D-1 醃漬冷藏", checked: false },
+            { id: 8, section: "cold", category: "大人主食", name: "韓式烤肉（辣）", qty: "6 條 / 大長方保鮮盒", plate: "大盤 1", note: "前一天 D-1 醃肉冷凍；現場退冰現煎", checked: false },
+            { id: 9, section: "cold", category: "大人主食", name: "白飯", qty: "3 人份 / 大保鮮袋", plate: "大盤 2", note: "前一天 D-1 煮熟冷藏分裝", checked: false },
+            { id: 10, section: "cold", category: "大人主食", name: "泡菜", qty: "1 罐 / 原裝", plate: "小碗 1", note: "當天上營地前全聯採買", checked: false },
+            { id: 11, section: "cold", category: "大人主食", name: "蝦鬆 (萬爸特製)", qty: "1 份 / 中長方保鮮盒", plate: "中盤 1", note: "前一天 D-1 預炒料理冷藏", checked: false },
+            { id: 12, section: "cold", category: "小孩主食", name: "奶油鮭魚炒飯", qty: "6 人份 / 大保鮮袋", plate: "大盤 4", note: "前一天 D-1 預先炒好冷藏，現場翻炒回溫", checked: false },
+            { id: 13, section: "cold", category: "小孩主食", name: "迷你披薩", qty: "10 個 / 大保鮮袋", plate: "大盤 5", note: "前一天 D-1 製作/分裝，現場煎烤加熱", checked: false },
+            { id: 15, section: "ambient", category: "飲品", name: "蜂蜜", qty: "分裝少許 / 小寶特瓶", plate: "-", note: "前一天 D-1分裝，搭配冰角特調用", checked: false },
+            { id: 16, section: "ambient", category: "飲品", name: "可爾必思濃縮", qty: "1 瓶 / 原瓶裝", plate: "-", note: "常溫攜帶，飲品調製基底", checked: false },
+            { id: 17, section: "ambient", category: "飲品", name: "飲料壺", qty: "1 個 / -", plate: "-", note: "特調飲品/氣泡水混調盛裝用", checked: false },
+            { id: 18, section: "ambient", category: "大人主食", name: "美生菜", qty: "1 顆 / 大保鮮袋", plate: "大盤 3", note: "前一天 D-1洗淨瀝乾，鋪紙巾吸水保持爽脆", checked: false },
+            { id: 19, section: "ambient", category: "調味料", name: "鹽", qty: "少許 / 小醬料盒", plate: "-", note: "炒飯與食材現場調味備用", checked: false },
+            { id: 20, section: "ambient", category: "調味料", name: "胡椒", qty: "少許 / 小醬料盒", plate: "-", note: "煎烤肉類與食材調味備用", checked: false },
+            { id: 21, section: "ambient", category: "調味料", name: "香料粉", qty: "少許 / 小醬料盒", plate: "-", note: "烤肉/披薩/炒飯增添風味", checked: false },
+            { id: 22, section: "ambient", category: "調味料", name: "黑糖", qty: "1 份 / 小分裝袋", plate: "-", note: "甜品/仙草調味備用", checked: false }
+        ];
+
+        const FOOD_CATEGORY_COLORS = {
+            "飲品": "amber",
+            "甜品": "teal",
+            "大人主食": "rose",
+            "小孩主食": "orange",
+            "調味料": "stone"
+        };
+
+        let foodItems = [];
+        let editingFoodId = null;
+
+        function loadFoodItems() {
+            const saved = localStorage.getItem('blue_magpie_food_items_v1');
+            if (saved) {
+                try {
+                    foodItems = JSON.parse(saved);
+                } catch (e) {
+                    foodItems = JSON.parse(JSON.stringify(DEFAULT_FOOD_ITEMS));
+                }
+            } else {
+                foodItems = JSON.parse(JSON.stringify(DEFAULT_FOOD_ITEMS));
+            }
+            renderFoodItems();
+        }
+
+        function saveFoodItems() {
+            if (window.firebaseDB && window.fbRef && window.fbSet) {
+                window.fbSet(window.fbRef(window.firebaseDB, 'camping_food_items'), foodItems);
+            } else {
+                localStorage.setItem('blue_magpie_food_items_v1', JSON.stringify(foodItems));
+            }
+            renderFoodItems();
+        }
+
+        function renderFoodRow(item) {
+            const color = FOOD_CATEGORY_COLORS[item.category] || "stone";
+            const isBuyDay = (item.note || '').includes('當天');
+            const plateHtml = item.plate && item.plate !== '-'
+                ? `<span class="text-stone-800 font-medium">${item.plate}</span>`
+                : `<span class="text-stone-400">-</span>`;
+            const noteClass = isBuyDay ? 'text-stone-600 font-bold text-amber-700' : 'text-stone-600';
+            return `
+                <tr class="hover:bg-stone-50 transition-colors" data-food-id="${item.id}" draggable="true" ondragstart="handleFoodDragStart(event, ${item.id})" ondragend="handleFoodDragEnd(event)">
+                    <td class="p-2.5 text-stone-300 hover:text-stone-500 cursor-grab active:cursor-grabbing" title="拖曳排序"><i class="fa-solid fa-grip-vertical"></i></td>
+                    <td class="p-2.5"><input type="checkbox" id="food_${item.id}" ${item.checked ? 'checked' : ''} onchange="toggleFoodChecked(${item.id})" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                    <td class="p-2.5"><span class="badge-pill bg-${color}-100 text-${color}-800">${item.category}</span></td>
+                    <td class="p-2.5 font-bold"><label for="food_${item.id}" class="cursor-pointer">${item.name}</label></td>
+                    <td class="p-2.5 text-stone-600">${item.qty || '-'}</td>
+                    <td class="p-2.5">${plateHtml}</td>
+                    <td class="p-2.5 ${noteClass}">${item.note || '-'}</td>
+                    <td class="p-2.5 text-right space-x-1 whitespace-nowrap">
+                        <button onclick="openEditFoodModal(${item.id})" title="編輯" class="text-stone-400 hover:text-emerald-600 p-1.5 rounded-lg hover:bg-emerald-50 text-xs"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteFoodItem(${item.id})" title="刪除" class="text-stone-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 text-xs"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function renderFoodItems() {
+            const coldItems = foodItems.filter(i => i.section === 'cold');
+            const ambientItems = foodItems.filter(i => i.section === 'ambient');
+
+            const coldTbody = document.getElementById('food-cold-tbody');
+            const ambientTbody = document.getElementById('food-ambient-tbody');
+            if (coldTbody) {
+                coldTbody.innerHTML = coldItems.length
+                    ? coldItems.map(renderFoodRow).join('')
+                    : `<tr><td colspan="8" class="p-4 text-center text-stone-400 text-xs">尚無項目，請點擊上方「新增食材項目」</td></tr>`;
+            }
+            if (ambientTbody) {
+                ambientTbody.innerHTML = ambientItems.length
+                    ? ambientItems.map(renderFoodRow).join('')
+                    : `<tr><td colspan="8" class="p-4 text-center text-stone-400 text-xs">尚無項目，請點擊上方「新增食材項目」</td></tr>`;
+            }
+
+            const coldCount = document.getElementById('food-cold-count');
+            const ambientCount = document.getElementById('food-ambient-count');
+            if (coldCount) coldCount.innerText = coldItems.length + ' 項';
+            if (ambientCount) ambientCount.innerText = ambientItems.length + ' 項';
+
+            updateFoodProgress();
+        }
+
+        function toggleFoodChecked(id) {
+            const item = foodItems.find(i => i.id === id);
+            if (item) {
+                item.checked = !item.checked;
+                saveFoodItems();
+            }
+        }
+
+        // 手動拖拉排序
+        let draggedFoodId = null;
+
+        function handleFoodDragStart(e, id) {
+            draggedFoodId = id;
+            e.dataTransfer.effectAllowed = 'move';
+            try { e.dataTransfer.setData('text/plain', String(id)); } catch (err) {}
+            e.currentTarget.classList.add('opacity-40');
+        }
+
+        function handleFoodDragEnd(e) {
+            e.currentTarget.classList.remove('opacity-40');
+            document.querySelectorAll('.food-drag-over').forEach(el => el.classList.remove('food-drag-over', 'bg-emerald-50'));
+            draggedFoodId = null;
+        }
+
+        function handleFoodTbodyDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            const row = e.target.closest('tr[data-food-id]');
+            document.querySelectorAll('.food-drag-over').forEach(el => el.classList.remove('food-drag-over', 'bg-emerald-50'));
+            if (row && Number(row.dataset.foodId) !== draggedFoodId) {
+                row.classList.add('food-drag-over', 'bg-emerald-50');
+            }
+        }
+
+        function handleFoodTbodyDrop(e, section) {
+            e.preventDefault();
+            document.querySelectorAll('.food-drag-over').forEach(el => el.classList.remove('food-drag-over', 'bg-emerald-50'));
+            if (draggedFoodId === null) return;
+
+            const targetRow = e.target.closest('tr[data-food-id]');
+            const targetId = targetRow ? Number(targetRow.dataset.foodId) : null;
+            if (targetId === draggedFoodId) { draggedFoodId = null; return; }
+
+            const fromIndex = foodItems.findIndex(i => i.id === draggedFoodId);
+            if (fromIndex === -1) { draggedFoodId = null; return; }
+            const [draggedItem] = foodItems.splice(fromIndex, 1);
+            draggedItem.section = section;
+
+            let toIndex = targetId !== null ? foodItems.findIndex(i => i.id === targetId) : -1;
+
+            if (toIndex === -1) {
+                let lastSectionIndex = -1;
+                foodItems.forEach((it, idx) => { if (it.section === section) lastSectionIndex = idx; });
+                toIndex = lastSectionIndex + 1;
+            }
+            foodItems.splice(toIndex, 0, draggedItem);
+
+            draggedFoodId = null;
+            saveFoodItems();
+        }
+
+        function openAddFoodModal() {
+            editingFoodId = null;
+            document.getElementById('food-modal-title').innerText = "新增食材項目";
+            document.getElementById('food-input-section').value = 'cold';
+            document.getElementById('food-input-category').value = '飲品';
+            document.getElementById('food-input-name').value = '';
+            document.getElementById('food-input-qty').value = '';
+            document.getElementById('food-input-plate').value = '';
+            document.getElementById('food-input-note').value = '';
+            document.getElementById('food-modal').classList.remove('hidden');
+        }
+
+        function openEditFoodModal(id) {
+            const item = foodItems.find(i => i.id === id);
+            if (!item) return;
+            editingFoodId = id;
+            document.getElementById('food-modal-title').innerText = "編輯食材項目";
+            document.getElementById('food-input-section').value = item.section;
+            document.getElementById('food-input-category').value = item.category;
+            document.getElementById('food-input-name').value = item.name;
+            document.getElementById('food-input-qty').value = item.qty || '';
+            document.getElementById('food-input-plate').value = item.plate || '';
+            document.getElementById('food-input-note').value = item.note || '';
+            document.getElementById('food-modal').classList.remove('hidden');
+        }
+
+        function closeFoodModal() {
+            document.getElementById('food-modal').classList.add('hidden');
+        }
+
+        function saveFoodModalItem() {
+            const section = document.getElementById('food-input-section').value;
+            const category = document.getElementById('food-input-category').value;
+            const name = document.getElementById('food-input-name').value.trim();
+            const qty = document.getElementById('food-input-qty').value.trim() || '-';
+            const plate = document.getElementById('food-input-plate').value.trim() || '-';
+            const note = document.getElementById('food-input-note').value.trim() || '-';
+
+            if (!name) {
+                alert("請輸入菜單/食材名稱！");
+                return;
+            }
+
+            if (editingFoodId !== null) {
+                const item = foodItems.find(i => i.id === editingFoodId);
+                if (item) {
+                    item.section = section;
+                    item.category = category;
+                    item.name = name;
+                    item.qty = qty;
+                    item.plate = plate;
+                    item.note = note;
+                }
+            } else {
+                foodItems.push({
+                    id: Date.now(),
+                    section, category, name, qty, plate, note,
+                    checked: false
+                });
+            }
+
+            saveFoodItems();
+            closeFoodModal();
+        }
+
+        function deleteFoodItem(id) {
+            if (confirm("確定要刪除這個食材項目嗎？")) {
+                foodItems = foodItems.filter(i => i.id !== id);
+                saveFoodItems();
+            }
+        }
+
+        function resetFoodItems() {
+            if (confirm("確定要將食材清單重設為預設值嗎？")) {
+                foodItems = JSON.parse(JSON.stringify(DEFAULT_FOOD_ITEMS));
+                saveFoodItems();
+            }
         }
 
         // PROGRESS FOR FOOD & GEAR
@@ -1906,8 +2046,8 @@
         // Initialize on DOM loaded
         document.addEventListener('DOMContentLoaded', () => {
             loadPersonalItems();
+            loadFoodItems();
             renderSplitApp();
-            updateFoodProgress();
             updateGearProgress();
         });
     </script>
