@@ -2154,35 +2154,23 @@
                 groupTotals[groupKey].totalAmount += amt;
             });
 
-            // 2. 針對總計後的金額進行分除與優惠墊付者計算
+            // 2. 針對總計後的金額進行分除；無法整除時，依總墊付金額由大到小排序，
+            //    墊付金額最多的人分攤金額最小，墊付金額最少的人分攤金額最大
             Object.values(groupTotals).forEach(group => {
                 const totalAmt = group.totalAmount;
                 const n = group.splitWith.length;
                 if (n === 0 || totalAmt === 0) return;
 
-                const isPayerInSplit = group.splitWith.includes(group.payer);
+                const baseShare = Math.floor(totalAmt / n);
+                const remainder = totalAmt % n;
 
-                if (isPayerInSplit && n > 1) {
-                    // 總額分除：其他人無條件進位，墊付者享受扣減餘額優惠
-                    const othersShare = Math.ceil(totalAmt / n);
-                    const payerShare = totalAmt - (othersShare * (n - 1));
+                const sortedByPaidAsc = group.splitWith.slice().sort((a, b) => (paid[a] || 0) - (paid[b] || 0));
 
-                    group.splitWith.forEach(member => {
-                        if (share[member] !== undefined) {
-                            share[member] += (member === group.payer) ? payerShare : othersShare;
-                        }
-                    });
-                } else {
-                    // 墊付者不在分攤名單內時，餘數依序分攤
-                    const baseShare = Math.floor(totalAmt / n);
-                    const remainder = totalAmt % n;
-
-                    group.splitWith.forEach((member, idx) => {
-                        if (share[member] !== undefined) {
-                            share[member] += baseShare + (idx < remainder ? 1 : 0);
-                        }
-                    });
-                }
+                sortedByPaidAsc.forEach((member, idx) => {
+                    if (share[member] !== undefined) {
+                        share[member] += baseShare + (idx < remainder ? 1 : 0);
+                    }
+                });
             });
 
             // 3. 渲染各家收支總結
