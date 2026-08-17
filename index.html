@@ -57,6 +57,49 @@
             scrollbar-width: none;
         }
     </style>
+
+    <!-- Firebase Realtime Database Scripts (Modular via script type=module) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_WDDtGW0WeSFP1plre-2L6QamVnCCMVY",
+            authDomain: "millieweb-3dffe.firebaseapp.com",
+            projectId: "millieweb-3dffe",
+            storageBucket: "millieweb-3dffe.firebasestorage.app",
+            messagingSenderId: "389133876060",
+            appId: "1:389133876060:web:6790b50b4759693af51f99",
+            measurementId: "G-7LPMD61T7J"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // 掛載至 window 供全域使用
+        window.firebaseDB = db;
+        window.fbRef = ref;
+        window.fbSet = set;
+        window.fbOnValue = onValue;
+
+        // 連線狀態監聽
+        const connectedRef = ref(db, ".info/connected");
+        onValue(connectedRef, (snap) => {
+            const statusEl = document.getElementById('sync-status-indicator');
+            if (statusEl) {
+                if (snap.val() === true) {
+                    statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> 雲端即時同步中';
+                    statusEl.className = "inline-flex items-center gap-1.5 bg-emerald-900/60 text-emerald-200 border border-emerald-500/30 px-2.5 py-1 rounded-full text-xs shadow-sm";
+                } else {
+                    statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-rose-400"></span> 連線中斷 (離線)';
+                    statusEl.className = "inline-flex items-center gap-1.5 bg-rose-900/60 text-rose-200 border border-rose-500/30 px-2.5 py-1 rounded-full text-xs shadow-sm";
+                }
+            }
+        });
+
+        // 觸發自定義事件通知 DOM 載入雲端監聽
+        window.dispatchEvent(new Event('firebase-ready'));
+    </script>
 </head>
 <body class="pb-16 antialiased">
 
@@ -66,9 +109,14 @@
             <img src="image/露營車照.jpg" alt="藍鵲露營車全景" class="w-full h-full object-cover">
         </div>
         <div class="relative max-w-4xl mx-auto text-center space-y-4">
-            <span class="inline-block bg-amber-500 text-stone-900 font-bold px-4 py-1 rounded-full text-xs md:text-sm tracking-wide shadow-md">
-                🏕️ 夏日終極篇 • 親子露營車之旅
-            </span>
+            <div class="flex flex-wrap justify-center items-center gap-2">
+                <span class="inline-block bg-amber-500 text-stone-900 font-bold px-4 py-1 rounded-full text-xs md:text-sm tracking-wide shadow-md">
+                    🏕️ 夏日終極篇 • 親子露營車之旅
+                </span>
+                <span id="sync-status-indicator" class="inline-flex items-center gap-1.5 bg-black/40 text-stone-300 border border-white/20 px-2.5 py-1 rounded-full text-xs shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> 連線至雲端中...
+                </span>
+            </div>
             <h1 class="text-3xl md:text-5xl font-black tracking-tight leading-tight drop-shadow-md">
                 抓住暑假的尾巴！<br>藍鵲露營車兩天一夜
             </h1>
@@ -105,13 +153,13 @@
                 <i class="fa-solid fa-suitcase-rolling mr-1"></i> 個人用品
             </button>
             <button onclick="switchTab('foodlist')" id="tab-foodlist" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
-                <i class="fa-solid fa-basket-shopping mr-1"></i> 食材清單
+                <i class="fa-solid fa-basket-shopping mr-1"></i> 食材清單 <span class="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.5 rounded-full font-bold ml-0.5">即時</span>
             </button>
             <button onclick="switchTab('gearlist')" id="tab-gearlist" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
-                <i class="fa-solid fa-campground mr-1"></i> 營地裝備
+                <i class="fa-solid fa-campground mr-1"></i> 營地裝備 <span class="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.5 rounded-full font-bold ml-0.5">即時</span>
             </button>
             <button onclick="switchTab('split')" id="tab-split" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
-                <i class="fa-solid fa-calculator mr-1"></i> 分帳小工具
+                <i class="fa-solid fa-calculator mr-1"></i> 分帳小工具 <span class="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.5 rounded-full font-bold ml-0.5">即時</span>
             </button>
         </div>
     </nav>
@@ -139,8 +187,6 @@
                         <i class="fa-solid fa-diamond-turn-right mr-2"></i> 開啟 Google 導航
                     </a>
                 </div>
-
-
 
                 <!-- Facilities Badges Grid -->
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs mb-4">
@@ -333,51 +379,41 @@
                         <span class="bg-forest text-white text-xs md:text-sm px-3 py-1 rounded-lg mr-2">DAY 1</span>
                         8/21(五)露營啟程 & 水上狂歡
                     </h3>
-                
                 </div>
                 <section class="reference-links" style="margin: 20px 0; padding: 16px; background-color: #f9f9f9; border-radius: 8px; border: 1px solid #e0e0e0;">
-  <h3 style="margin-top: 0; margin-bottom: 12px; color: #333;">📍 行程參考資訊</h3>
-  <ul style="list-style-type: none; padding-left: 0; margin: 0; line-height: 1.8;">
-    <li style="margin-bottom: 8px;">
-      🍽️ <strong>中餐參考：桃園平鎮 倒吃甘蔗-客家菜（需先訂位）</strong>
-     
-   
-      <a href="https://maps.app.goo.gl/9e4BGxfA2DDLeEZK7?g_st=ic" target="_blank" 
-                       class="inline-flex items-center justify-center bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-all shadow-sm">
-                        <i class="fa-solid fa-diamond-turn-right mr-2"></i> 開啟Google導航
-                    </a>
-                     <br>
-    </li>
-    <li>
-      🛒 <strong>採買參考：全聯福利中心 通霄自強店</strong>
-      
-    
-      <a href="https://maps.app.goo.gl/nJ2uNSQvrZNqGJpr8?g_st=ic" target="_blank" 
-        class="inline-flex items-center justify-center bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-all shadow-sm">
-         <i class="fa-solid fa-diamond-turn-right mr-2"></i> 開啟Google導航
-        </a>
-      <br>
-    </li>
-    
-  </ul>
-</section>
+                    <h3 style="margin-top: 0; margin-bottom: 12px; color: #333;">📍 行程參考資訊</h3>
+                    <ul style="list-style-type: none; padding-left: 0; margin: 0; line-height: 1.8;">
+                        <li style="margin-bottom: 8px;">
+                            🍽️ <strong>中餐參考：桃園平鎮 倒吃甘蔗-客家菜（需先訂位）</strong>
+                            <a href="https://maps.app.goo.gl/9e4BGxfA2DDLeEZK7?g_st=ic" target="_blank" 
+                               class="inline-flex items-center justify-center bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-all shadow-sm">
+                                <i class="fa-solid fa-diamond-turn-right mr-2"></i> 開啟Google導航
+                            </a>
+                            <br>
+                        </li>
+                        <li>
+                            🛒 <strong>採買參考：全聯福利中心 通霄自強店</strong>
+                            <a href="https://maps.app.goo.gl/nJ2uNSQvrZNqGJpr8?g_st=ic" target="_blank" 
+                               class="inline-flex items-center justify-center bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-all shadow-sm">
+                                <i class="fa-solid fa-diamond-turn-right mr-2"></i> 開啟Google導航
+                            </a>
+                            <br>
+                        </li>
+                    </ul>
+                </section>
 
                 <div class="space-y-6 relative before:absolute before:inset-0 before:left-3.5 before:w-0.5 before:bg-emerald-200">
-                    
                     <div class="relative pl-8">
                         <div class="absolute left-0 top-1.5 w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold ring-4 ring-white">12</div>
                         <div class="bg-stone-50 p-4 rounded-xl border border-stone-200">
-                            
                             <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">12:00 後</span>
                             <h4 class="font-bold text-base text-stone-800 mt-1">藍鵲露營場  提前入園，開始玩耍！</h4>
                             <p class="text-xs sm:text-sm text-stone-600 mt-1">推薦提早進園區認識環境，先攻玩沙區、遊戲區攀爬溜滑梯與盪鞦韆！</p>
-                        
-                         <a href="https://maps.app.goo.gl/iEHWTxZxiRxtAK8Z9?g_st=ic" target="_blank" 
-                       class="inline-flex items-center justify-center bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-all shadow-sm">
-                        <i class="fa-solid fa-diamond-turn-right mr-2"></i> 開啟 Google 導航
-                    </a>
+                            <a href="https://maps.app.goo.gl/iEHWTxZxiRxtAK8Z9?g_st=ic" target="_blank" 
+                               class="inline-flex items-center justify-center bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-all shadow-sm">
+                                <i class="fa-solid fa-diamond-turn-right mr-2"></i> 開啟 Google 導航
+                            </a>
                         </div>
-                        
                     </div>
 
                     <div class="relative pl-8">
@@ -406,7 +442,6 @@
                             <p class="text-xs sm:text-sm text-rose-900 mt-1">雙爐齊發！韓式辣烤肉、蝦鬆、鮭魚炒飯，陸續上桌！</p>
                         </div>
                     </div>
-
                 </div>
             </div>
 
@@ -420,7 +455,6 @@
                 </div>
 
                 <div class="space-y-6 relative before:absolute before:inset-0 before:left-3.5 before:w-0.5 before:bg-emerald-200">
-                    
                     <div class="relative pl-8">
                         <div class="absolute left-0 top-1.5 w-7 h-7 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs font-bold ring-4 ring-white">08</div>
                         <div class="bg-stone-50 p-4 rounded-xl border border-stone-200">
@@ -453,21 +487,18 @@
                         <div class="bg-purple-50/80 p-4 rounded-xl border border-purple-200">
                             <span class="text-xs font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded">12:00 - 13:30</span>
                             <h4 class="font-bold text-base text-purple-950 mt-1">桐花村 三義客家料理 饕客午餐 🥢</h4>
-                            
                             <p class="text-xs sm:text-sm text-purple-900 mt-1">
                                 莊園車程約 25 分鐘（訂位 6 大 4 小）。 享受客家美食（客家小炒、鹹豬肉、燜筍)
                             </p>
                             <p class="text-xs sm:text-sm text-purple-900 mt-1">
                                 為旅程畫下完美句點！
                             </p>
-                           
-                             <a href="https://maps.app.goo.gl/GHfZH51MXBmwaksV6" target="_blank" 
-                       class="inline-flex items-center justify-center bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-all shadow-sm">
-                        <i class="fa-solid fa-diamond-turn-right mr-2"></i> 開啟 Google 導航
-                    </a>
+                            <a href="https://maps.app.goo.gl/GHfZH51MXBmwaksV6" target="_blank" 
+                               class="inline-flex items-center justify-center bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-all shadow-sm">
+                                <i class="fa-solid fa-diamond-turn-right mr-2"></i> 開啟 Google 導航
+                            </a>
                         </div>
                     </div>
-
                 </div>
             </div>
 
@@ -493,7 +524,6 @@
 
                 <!-- Menu Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    
                     <!-- Beverages & Kids Main -->
                     <div class="space-y-4">
                         <div class="bg-amber-50/70 p-4 rounded-xl border border-amber-200">
@@ -543,7 +573,6 @@
                             </ul>
                         </div>
                     </div>
-
                 </div>
 
                 <!-- Family Task Allocation Cards -->
@@ -591,7 +620,7 @@
                             <span class="font-bold text-forest text-base sm:text-lg">🧳 個人用品打包清單</span>
                             <span id="personal-progress-percent" class="font-bold text-emerald-600 text-lg">0%</span>
                         </div>
-                        <p class="text-xs text-stone-500">可自由點擊文字編輯、按「+」新增項目或刪除，資料會自動儲存！</p>
+                        <p class="text-xs text-stone-500">此區為個人專屬紀錄，資料自動存於各自身機瀏覽器中。</p>
                     </div>
                     <div class="flex items-center space-x-2">
                         <button onclick="openAddItemModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-1.5 rounded-xl text-xs sm:text-sm flex items-center shadow-sm transition-all">
@@ -608,9 +637,7 @@
             </div>
 
             <!-- Dynamic Categories Container -->
-            <div id="personal-items-container" class="space-y-6">
-                <!-- Javascript will dynamically render category cards here -->
-            </div>
+            <div id="personal-items-container" class="space-y-6"></div>
 
         </section>
 
@@ -620,7 +647,10 @@
             <!-- Progress Bar -->
             <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
                 <div class="flex justify-between items-center mb-2">
-                    <span class="font-bold text-forest">🍱 食材準備進度 (Food Progress)</span>
+                    <span class="font-bold text-forest flex items-center gap-2">
+                        🍱 食材準備進度 (Food Progress)
+                        <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">即時同步</span>
+                    </span>
                     <span id="food-progress-percent" class="font-bold text-emerald-600 text-lg">0%</span>
                 </div>
                 <div class="w-full bg-stone-200 h-3 rounded-full overflow-hidden">
@@ -650,7 +680,7 @@
                         </thead>
                         <tbody class="divide-y divide-stone-100">
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f1" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="f1" onchange="syncCheckState('food', 'f1', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-amber-100 text-amber-800">飲品</span></td>
                                 <td class="p-2.5 font-bold"><label for="f1" class="cursor-pointer">百香果冰角</label></td>
                                 <td class="p-2.5 text-stone-600">數個 / -</td>
@@ -658,7 +688,7 @@
                                 <td class="p-2.5 text-stone-600">保冷袋打包（冷凍攜帶）</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f2" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="f2" onchange="syncCheckState('food', 'f2', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-amber-100 text-amber-800">飲品</span></td>
                                 <td class="p-2.5 font-bold"><label for="f2" class="cursor-pointer">檸檬冰角</label></td>
                                 <td class="p-2.5 text-stone-600">數個 / -</td>
@@ -666,7 +696,7 @@
                                 <td class="p-2.5 text-stone-600">保冷袋打包（冷凍攜帶）</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f3" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="f3" onchange="syncCheckState('food', 'f3', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-amber-100 text-amber-800">飲品</span></td>
                                 <td class="p-2.5 font-bold"><label for="f3" class="cursor-pointer">濃縮糖水</label></td>
                                 <td class="p-2.5 text-stone-600">分裝少許 / 小寶特瓶</td>
@@ -674,7 +704,7 @@
                                 <td class="p-2.5 text-stone-600">仙草調味用，保冷袋打包</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f4" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="f4" onchange="syncCheckState('food', 'f4', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-amber-100 text-amber-800">飲品</span></td>
                                 <td class="p-2.5 font-bold text-blue-700"><label for="f4" class="cursor-pointer">食用冰塊</label></td>
                                 <td class="p-2.5 text-stone-600">1 包 / -</td>
@@ -682,7 +712,7 @@
                                 <td class="p-2.5 text-stone-600 font-bold text-amber-700">當天上營地前全聯採買，保冷袋打包</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f5" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="f5" onchange="syncCheckState('food', 'f5', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">甜品</span></td>
                                 <td class="p-2.5 font-bold text-blue-700"><label for="f5" class="cursor-pointer">仙草</label></td>
                                 <td class="p-2.5 text-stone-600">1 份 / -</td>
@@ -690,7 +720,7 @@
                                 <td class="p-2.5 text-stone-600 font-bold text-amber-700">當天上營地前全聯採買，保冷袋打包</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f6" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="f6" onchange="syncCheckState('food', 'f6', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-rose-100 text-rose-800">大人主食</span></td>
                                 <td class="p-2.5 font-bold"><label for="f6" class="cursor-pointer">醃小黃瓜</label></td>
                                 <td class="p-2.5 text-stone-600">1 盒 / 小正方保鮮盒</td>
@@ -698,7 +728,7 @@
                                 <td class="p-2.5 text-stone-600">前一天 D-1 醃漬冷藏</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f7" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="f7" onchange="syncCheckState('food', 'f7', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-rose-100 text-rose-800">大人主食</span></td>
                                 <td class="p-2.5 font-bold"><label for="f7" class="cursor-pointer">醃豆芽菜金針菇</label></td>
                                 <td class="p-2.5 text-stone-600">1 盒 / 小正方保鮮盒</td>
@@ -706,7 +736,7 @@
                                 <td class="p-2.5 text-stone-600">前一天 D-1 醃漬冷藏</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f8" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="f8" onchange="syncCheckState('food', 'f8', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-rose-100 text-rose-800">大人主食</span></td>
                                 <td class="p-2.5 font-bold text-rose-700"><label for="f8" class="cursor-pointer">韓式烤肉（辣）</label></td>
                                 <td class="p-2.5 text-stone-600">6 條 / 大長方保鮮盒</td>
@@ -714,7 +744,7 @@
                                 <td class="p-2.5 text-stone-600">前一天 D-1 醃肉冷凍；現場退冰現煎</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f9" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="f9" onchange="syncCheckState('food', 'f9', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-rose-100 text-rose-800">大人主食</span></td>
                                 <td class="p-2.5 font-bold"><label for="f9" class="cursor-pointer">白飯</label></td>
                                 <td class="p-2.5 text-stone-600">3 人份 / 大保鮮袋</td>
@@ -722,7 +752,7 @@
                                 <td class="p-2.5 text-stone-600">前一天 D-1 煮熟冷藏分裝</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f10" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="f10" onchange="syncCheckState('food', 'f10', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-rose-100 text-rose-800">大人主食</span></td>
                                 <td class="p-2.5 font-bold"><label for="f10" class="cursor-pointer">泡菜</label></td>
                                 <td class="p-2.5 text-stone-600">1 罐 / 原裝</td>
@@ -730,7 +760,7 @@
                                 <td class="p-2.5 text-stone-600 font-bold text-amber-700">當天上營地前全聯採買</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f11" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="f11" onchange="syncCheckState('food', 'f11', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-rose-100 text-rose-800">大人主食</span></td>
                                 <td class="p-2.5 font-bold text-rose-700"><label for="f11" class="cursor-pointer">蝦鬆 (萬爸特製)</label></td>
                                 <td class="p-2.5 text-stone-600">1 份 / 中長方保鮮盒</td>
@@ -738,7 +768,7 @@
                                 <td class="p-2.5 text-stone-600">前一天 D-1 預炒料理冷藏</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f12" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="f12" onchange="syncCheckState('food', 'f12', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-orange-100 text-orange-800">小孩主食</span></td>
                                 <td class="p-2.5 font-bold text-orange-700"><label for="f12" class="cursor-pointer">奶油鮭魚炒飯</label></td>
                                 <td class="p-2.5 text-stone-600">6 人份 / 大保鮮袋</td>
@@ -746,7 +776,7 @@
                                 <td class="p-2.5 text-stone-600">前一天 D-1 預先炒好冷藏，現場翻炒回溫</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f13" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="f13" onchange="syncCheckState('food', 'f13', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-orange-100 text-orange-800">小孩主食</span></td>
                                 <td class="p-2.5 font-bold text-orange-700"><label for="f13" class="cursor-pointer">迷你披薩</label></td>
                                 <td class="p-2.5 text-stone-600">10 個 / 大保鮮袋</td>
@@ -780,7 +810,7 @@
                         </thead>
                         <tbody class="divide-y divide-stone-100">
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f15" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="f15" onchange="syncCheckState('food', 'f15', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-amber-100 text-amber-800">飲品</span></td>
                                 <td class="p-2.5 font-bold"><label for="f15" class="cursor-pointer">蜂蜜</label></td>
                                 <td class="p-2.5 text-stone-600">分裝少許 / 小寶特瓶</td>
@@ -788,7 +818,7 @@
                                 <td class="p-2.5 text-stone-600">前一天 D-1分裝，搭配冰角特調用</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f16" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="f16" onchange="syncCheckState('food', 'f16', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-amber-100 text-amber-800">飲品</span></td>
                                 <td class="p-2.5 font-bold"><label for="f16" class="cursor-pointer">可爾必思濃縮</label></td>
                                 <td class="p-2.5 text-stone-600">1 瓶 / 原瓶裝</td>
@@ -796,7 +826,7 @@
                                 <td class="p-2.5 text-stone-600">常溫攜帶，飲品調製基底</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f17" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="f17" onchange="syncCheckState('food', 'f17', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-amber-100 text-amber-800">飲品</span></td>
                                 <td class="p-2.5 font-bold"><label for="f17" class="cursor-pointer">飲料壺</label></td>
                                 <td class="p-2.5 text-stone-600">1 個 / -</td>
@@ -804,7 +834,7 @@
                                 <td class="p-2.5 text-stone-600">特調飲品/氣泡水混調盛裝用</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f18" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="f18" onchange="syncCheckState('food', 'f18', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-emerald-100 text-emerald-800">大人主食</span></td>
                                 <td class="p-2.5 font-bold text-emerald-800"><label for="f18" class="cursor-pointer">美生菜</label></td>
                                 <td class="p-2.5 text-stone-600">1 顆 / 大保鮮袋</td>
@@ -812,7 +842,7 @@
                                 <td class="p-2.5 text-stone-600 font-medium">前一天 D-1洗淨瀝乾，鋪紙巾吸水保持爽脆</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f19" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="f19" onchange="syncCheckState('food', 'f19', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">調味料</span></td>
                                 <td class="p-2.5 font-bold"><label for="f19" class="cursor-pointer">鹽</label></td>
                                 <td class="p-2.5 text-stone-600">少許 / 小醬料盒</td>
@@ -820,7 +850,7 @@
                                 <td class="p-2.5 text-stone-600">炒飯與食材現場調味備用</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f20" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="f20" onchange="syncCheckState('food', 'f20', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">調味料</span></td>
                                 <td class="p-2.5 font-bold"><label for="f20" class="cursor-pointer">胡椒</label></td>
                                 <td class="p-2.5 text-stone-600">少許 / 小醬料盒</td>
@@ -828,7 +858,7 @@
                                 <td class="p-2.5 text-stone-600">煎烤肉類與食材調味備用</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f21" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="f21" onchange="syncCheckState('food', 'f21', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">調味料</span></td>
                                 <td class="p-2.5 font-bold"><label for="f21" class="cursor-pointer">香料粉</label></td>
                                 <td class="p-2.5 text-stone-600">少許 / 小醬料盒</td>
@@ -836,7 +866,7 @@
                                 <td class="p-2.5 text-stone-600">烤肉/披薩/炒飯增添風味</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="f22" onchange="updateFoodProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="f22" onchange="syncCheckState('food', 'f22', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">調味料</span></td>
                                 <td class="p-2.5 font-bold"><label for="f22" class="cursor-pointer">黑糖</label></td>
                                 <td class="p-2.5 text-stone-600">1 份 / 小分裝袋</td>
@@ -856,7 +886,10 @@
             <!-- Progress Bar -->
             <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
                 <div class="flex justify-between items-center mb-2">
-                    <span class="font-bold text-forest">⛺ 營地裝備進度 (Gear Progress)</span>
+                    <span class="font-bold text-forest flex items-center gap-2">
+                        ⛺ 營地裝備進度 (Gear Progress)
+                        <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">即時同步</span>
+                    </span>
                     <span id="gear-progress-percent" class="font-bold text-emerald-600 text-lg">0%</span>
                 </div>
                 <div class="w-full bg-stone-200 h-3 rounded-full overflow-hidden">
@@ -885,84 +918,84 @@
                         </thead>
                         <tbody class="divide-y divide-stone-100">
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g1" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g1" onchange="syncCheckState('gear', 'g1', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-orange-100 text-orange-800">烹調器具</span></td>
                                 <td class="p-2.5 font-bold"><label for="g1" class="cursor-pointer">氣泡水機 + 氣瓶</label></td>
                                 <td class="p-2.5 text-stone-600">1 組</td>
                                 <td class="p-2.5 text-stone-600">含冷藏專用水瓶</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g2" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g2" onchange="syncCheckState('gear', 'g2', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-orange-100 text-orange-800">烹調器具</span></td>
                                 <td class="p-2.5 font-bold text-rose-700"><label for="g2" class="cursor-pointer">卡式爐</label></td>
                                 <td class="p-2.5 text-stone-600">2 爐</td>
                                 <td class="p-2.5 text-stone-600">出發前確認點火正常與爐頭清潔 (星家帶1臺)</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g3" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g3" onchange="syncCheckState('gear', 'g3', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-orange-100 text-orange-800">烹調器具</span></td>
                                 <td class="p-2.5 font-bold text-rose-700"><label for="g3" class="cursor-pointer">瓦斯罐</label></td>
                                 <td class="p-2.5 text-stone-600">3 罐</td>
                                 <td class="p-2.5 text-stone-600 font-bold text-emerald-700">當天上營地前全聯採買</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g4" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g4" onchange="syncCheckState('gear', 'g4', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-orange-100 text-orange-800">烹調器具</span></td>
                                 <td class="p-2.5 font-bold"><label for="g4" class="cursor-pointer">炒鍋</label></td>
                                 <td class="p-2.5 text-stone-600">1 個</td>
                                 <td class="p-2.5 text-stone-600">搭配奶油鮭魚炒飯翻炒回溫</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g5" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g5" onchange="syncCheckState('gear', 'g5', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-orange-100 text-orange-800">烹調器具</span></td>
                                 <td class="p-2.5 font-bold"><label for="g5" class="cursor-pointer">煎烤盤</label></td>
                                 <td class="p-2.5 text-stone-600">1 個</td>
                                 <td class="p-2.5 text-stone-600">韓式烤肉專用烤盤</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g6" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g6" onchange="syncCheckState('gear', 'g6', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">餐具用品</span></td>
                                 <td class="p-2.5 font-bold"><label for="g6" class="cursor-pointer">紙杯</label></td>
                                 <td class="p-2.5 text-stone-600">1 串</td>
                                 <td class="p-2.5 text-stone-600 font-bold text-emerald-700">當天上營地前全聯採買，備用免洗杯 (萬家準備)</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g7" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g7" onchange="syncCheckState('gear', 'g7', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">餐具用品</span></td>
                                 <td class="p-2.5 font-bold"><label for="g7" class="cursor-pointer">紙碗</label></td>
                                 <td class="p-2.5 text-stone-600">1 串</td>
                                 <td class="p-2.5 text-stone-600 font-bold text-emerald-700">當天上營地前全聯採買，主食與湯品分裝碗 (萬家準備)</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g8" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g8" onchange="syncCheckState('gear', 'g8', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">餐具用品</span></td>
                                 <td class="p-2.5 font-bold"><label for="g8" class="cursor-pointer">吸管</label></td>
                                 <td class="p-2.5 text-stone-600">數個</td>
                                 <td class="p-2.5 text-stone-600">飲品特調使用</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g9" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g9" onchange="syncCheckState('gear', 'g9', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">餐具用品</span></td>
                                 <td class="p-2.5 font-bold"><label for="g9" class="cursor-pointer">免洗筷</label></td>
                                 <td class="p-2.5 text-stone-600">數個</td>
                                 <td class="p-2.5 text-stone-600">用餐備用餐具</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g10" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g10" onchange="syncCheckState('gear', 'g10', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">餐具用品</span></td>
                                 <td class="p-2.5 font-bold"><label for="g10" class="cursor-pointer">大人筷子</label></td>
                                 <td class="p-2.5 text-stone-600">2 個</td>
                                 <td class="p-2.5 text-stone-600">自用環保餐具</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g11" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g11" onchange="syncCheckState('gear', 'g11', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">餐具用品</span></td>
                                 <td class="p-2.5 font-bold"><label for="g11" class="cursor-pointer">兒童餐具</label></td>
                                 <td class="p-2.5 text-stone-600">1 個</td>
                                 <td class="p-2.5 text-stone-600">小朋友專用匙叉</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g12" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g12" onchange="syncCheckState('gear', 'g12', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-stone-200 text-stone-800">餐具用品</span></td>
                                 <td class="p-2.5 font-bold"><label for="g12" class="cursor-pointer">兒童餐盤</label></td>
                                 <td class="p-2.5 text-stone-600">1 個</td>
@@ -994,105 +1027,105 @@
                         </thead>
                         <tbody class="divide-y divide-stone-100">
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g13" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g13" onchange="syncCheckState('gear', 'g13', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
                                 <td class="p-2.5 font-bold"><label for="g13" class="cursor-pointer">鍋鏟</label></td>
                                 <td class="p-2.5 text-stone-600">2 個</td>
                                 <td class="p-2.5 text-stone-600">分別搭配炒鍋與煎烤盤使用</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g14" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g14" onchange="syncCheckState('gear', 'g14', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
                                 <td class="p-2.5 font-bold">大夾子</td>
                                 <td class="p-2.5 text-stone-600">1 個</td>
                                 <td class="p-2.5 text-stone-600">(生食用)大夾子，生熟分流防污染</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g15" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g15" onchange="syncCheckState('gear', 'g15', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
                                 <td class="p-2.5 font-bold">小夾子</td>
                                 <td class="p-2.5 text-stone-600">2 個</td>
                                 <td class="p-2.5 text-stone-600">(熟食用)小夾子，熟食分菜取食專用</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g16" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g16" onchange="syncCheckState('gear', 'g16', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
                                 <td class="p-2.5 font-bold"><label for="g16" class="cursor-pointer">大湯匙</label></td>
                                 <td class="p-2.5 text-stone-600">1 個</td>
                                 <td class="p-2.5 text-stone-600">湯品 / 仙草盛裝分裝專用</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g17" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g17" onchange="syncCheckState('gear', 'g17', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
                                 <td class="p-2.5 font-bold"><label for="g17" class="cursor-pointer">湯匙</label></td>
                                 <td class="p-2.5 text-stone-600">4 個</td>
                                 <td class="p-2.5 text-stone-600">備用湯匙</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g18" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g18" onchange="syncCheckState('gear', 'g18', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
                                 <td class="p-2.5 font-bold"><label for="g18" class="cursor-pointer">料理剪刀</label></td>
                                 <td class="p-2.5 text-stone-600">1 個</td>
                                 <td class="p-2.5 text-stone-600">烤肉剪塊 / 食材修剪必備</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g19" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g19" onchange="syncCheckState('gear', 'g19', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
                                 <td class="p-2.5 font-bold"><label for="g19" class="cursor-pointer">托盤</label></td>
                                 <td class="p-2.5 text-stone-600">1 個</td>
                                 <td class="p-2.5 text-stone-600">食材出盤與盛裝上桌專用</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g20" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g20" onchange="syncCheckState('gear', 'g20', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
                                 <td class="p-2.5 font-bold"><label for="g20" class="cursor-pointer">鐵鍋盆</label></td>
                                 <td class="p-2.5 text-stone-600">1 個</td>
                                 <td class="p-2.5 text-stone-600">洗菜、備料、盛裝備用</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g21" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g21" onchange="syncCheckState('gear', 'g21', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
                                 <td class="p-2.5 font-bold"><label for="g21" class="cursor-pointer">噴油罐</label></td>
                                 <td class="p-2.5 text-stone-600">1 個</td>
                                 <td class="p-2.5 text-stone-600">煎烤盤防黏均勻噴油使用</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g27" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g27" onchange="syncCheckState('gear', 'g27', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-teal-100 text-teal-800">廚房工具</span></td>
                                 <td class="p-2.5 font-bold"><label for="g27" class="cursor-pointer">廚房紙巾</label></td>
                                 <td class="p-2.5 text-stone-600">1 捲</td>
                                 <td class="p-2.5 text-stone-600">生菜吸水、煎烤擦拭油污、料理台清潔</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g22" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g22" onchange="syncCheckState('gear', 'g22', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-indigo-100 text-indigo-800">營地裝備</span></td>
                                 <td class="p-2.5 font-bold"><label for="g22" class="cursor-pointer">野餐墊</label></td>
                                 <td class="p-2.5 text-stone-600">1 張</td>
                                 <td class="p-2.5 text-stone-600">黃色野餐墊，草地休閒放鬆區</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g23" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g23" onchange="syncCheckState('gear', 'g23', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-indigo-100 text-indigo-800">營地裝備</span></td>
                                 <td class="p-2.5 font-bold"><label for="g23" class="cursor-pointer">防蚊罐 / 噴霧</label></td>
                                 <td class="p-2.5 text-stone-600">1 罐</td>
                                 <td class="p-2.5 text-stone-600">戶外防蚊維護</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g24" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g24" onchange="syncCheckState('gear', 'g24', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-indigo-100 text-indigo-800">營地裝備</span></td>
                                 <td class="p-2.5 font-bold"><label for="g24" class="cursor-pointer">立式電風扇</label></td>
                                 <td class="p-2.5 text-stone-600">1 台</td>
                                 <td class="p-2.5 text-stone-600">公共空間通風（接電）</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g25" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g25" onchange="syncCheckState('gear', 'g25', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-indigo-100 text-indigo-800">營地裝備</span></td>
                                 <td class="p-2.5 font-bold"><label for="g25" class="cursor-pointer">小電風扇</label></td>
                                 <td class="p-2.5 text-stone-600">1 台</td>
                                 <td class="p-2.5 text-stone-600">隨身降溫備用（需充飽電)</td>
                             </tr>
                             <tr class="hover:bg-stone-50">
-                                <td class="p-2.5"><input type="checkbox" id="g26" onchange="updateGearProgress()" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
+                                <td class="p-2.5"><input type="checkbox" id="g26" onchange="syncCheckState('gear', 'g26', this.checked)" class="checkbox-custom w-4 h-4 text-emerald-600 rounded"></td>
                                 <td class="p-2.5"><span class="badge-pill bg-indigo-100 text-indigo-800">營地裝備</span></td>
                                 <td class="p-2.5 font-bold text-amber-800"><label for="g26" class="cursor-pointer">延長線</label></td>
                                 <td class="p-2.5 text-stone-600">1 條</td>
@@ -1114,11 +1147,11 @@
                     <h3 class="font-bold text-lg text-forest flex items-center">
                         <i class="fa-solid fa-users text-emerald-600 mr-2"></i> 參與成員與家庭管理
                     </h3>
-                    <span class="text-xs bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full font-bold">提醒:不會即時同步，僅存於本機端</span>
+                    <span class="text-xs bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full font-bold">✨ 雲端即時多人同步</span>
                 </div>
-                <p class="text-xs text-stone-500">此小工具僅為方便記錄計算，各項採買與墊付金額。資料儲存於本機瀏覽器中。</p>
+                <p class="text-xs text-stone-500">各家庭墊付與分攤資料已接上雲端資料庫，任何人新增或修改項目，所有人畫面皆會即時更新！</p>
                 <div class="flex gap-2">
-                    <input type="text" id="familyInput" placeholder="輸入成員名稱" class="flex-1 border border-stone-300 rounded-xl p-2.5 text-sm bg-stone-50 focus:outline-emerald-600">
+                    <input type="text" id="familyInput" placeholder="輸入成員名稱 (例如：萬家、星家)" class="flex-1 border border-stone-300 rounded-xl p-2.5 text-sm bg-stone-50 focus:outline-emerald-600">
                     <button onclick="addFamily()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-sm transition-all shadow-sm shrink-0">
                         <i class="fa-solid fa-user-plus mr-1"></i> 新增成員
                     </button>
@@ -1273,7 +1306,65 @@
             if(targetBtn) targetBtn.classList.add('active');
         }
 
+        // ==========================================
+        // FIREBASE REALTIME SYNC HANDLERS
+        // ==========================================
+
+        // 食材與裝備 Checkbox 點擊寫入雲端
+        function syncCheckState(type, id, checked) {
+            if (window.firebaseDB && window.fbRef && window.fbSet) {
+                window.fbSet(window.fbRef(window.firebaseDB, `camping_${type}/${id}`), checked);
+            }
+            if (type === 'food') updateFoodProgress();
+            if (type === 'gear') updateGearProgress();
+        }
+
+        function initFirebaseListeners() {
+            if (!window.firebaseDB) return;
+
+            // 1. 監聽食材清單
+            const foodRef = window.fbRef(window.firebaseDB, 'camping_food');
+            window.fbOnValue(foodRef, (snap) => {
+                const data = snap.val() || {};
+                document.querySelectorAll('#sec-foodlist input[type="checkbox"]').forEach(chk => {
+                    if (data[chk.id] !== undefined) {
+                        chk.checked = !!data[chk.id];
+                    }
+                });
+                updateFoodProgress();
+            });
+
+            // 2. 監聽營地裝備
+            const gearRef = window.fbRef(window.firebaseDB, 'camping_gear');
+            window.fbOnValue(gearRef, (snap) => {
+                const data = snap.val() || {};
+                document.querySelectorAll('#sec-gearlist input[type="checkbox"]').forEach(chk => {
+                    if (data[chk.id] !== undefined) {
+                        chk.checked = !!data[chk.id];
+                    }
+                });
+                updateGearProgress();
+            });
+
+            // 3. 監聽分帳小工具
+            const splitRef = window.fbRef(window.firebaseDB, 'camping_split');
+            window.fbOnValue(splitRef, (snap) => {
+                const data = snap.val();
+                if (data) {
+                    families = data.families || ['萬萬', '星星', '周周'];
+                    items = data.items || [];
+                }
+                renderSplitApp();
+            });
+        }
+
+        window.addEventListener('firebase-ready', () => {
+            initFirebaseListeners();
+        });
+
+        // ==========================================
         // DYNAMIC PERSONAL ITEMS MANAGEMENT (LocalStorage)
+        // ==========================================
         const DEFAULT_PERSONAL_ITEMS = [
             { id: 1, category: "衛生清潔", name: "小孩牙刷", qty: "1 個", checked: false },
             { id: 2, category: "衛生清潔", name: "小孩牙膏", qty: "1 個", checked: false },
@@ -1506,7 +1597,7 @@
             checkboxes.forEach(chk => {
                 if(chk.checked) checkedCount++;
             });
-            const percent = Math.round((checkedCount / checkboxes.length) * 100);
+            const percent = checkboxes.length ? Math.round((checkedCount / checkboxes.length) * 100) : 0;
             document.getElementById('food-progress-bar').style.width = percent + '%';
             document.getElementById('food-progress-percent').innerText = percent + '%';
         }
@@ -1517,7 +1608,7 @@
             checkboxes.forEach(chk => {
                 if(chk.checked) checkedCount++;
             });
-            const percent = Math.round((checkedCount / checkboxes.length) * 100);
+            const percent = checkboxes.length ? Math.round((checkedCount / checkboxes.length) * 100) : 0;
             document.getElementById('gear-progress-bar').style.width = percent + '%';
             document.getElementById('gear-progress-percent').innerText = percent + '%';
         }
@@ -1525,12 +1616,20 @@
         // ==========================================
         // 分帳小工具 LOGIC (SHARE / SPLIT CALC)
         // ==========================================
-        let families = JSON.parse(localStorage.getItem('split_families')) || ['萬萬', '星星', '周周'];
-        let items = JSON.parse(localStorage.getItem('split_items')) || [];
+        let families = ['萬萬', '星星', '周周'];
+        let items = [];
 
         function saveSplitData() {
-            localStorage.setItem('split_families', JSON.stringify(families));
-            localStorage.setItem('split_items', JSON.stringify(items));
+            // 同步至 Firebase
+            if (window.firebaseDB && window.fbRef && window.fbSet) {
+                window.fbSet(window.fbRef(window.firebaseDB, 'camping_split'), {
+                    families: families,
+                    items: items
+                });
+            } else {
+                localStorage.setItem('split_families', JSON.stringify(families));
+                localStorage.setItem('split_items', JSON.stringify(items));
+            }
             renderSplitApp();
         }
 
@@ -1683,7 +1782,7 @@
                             <td class="p-2.5 font-bold text-stone-800">${item.name}</td>
                             <td class="p-2.5 text-emerald-700 font-bold">$${item.amount.toLocaleString()}</td>
                             <td class="p-2.5"><span class="badge-pill bg-blue-100 text-blue-800">${item.payer}</span></td>
-                            <td class="p-2.5 text-stone-500 text-xs">${item.splitWith.join(', ')}</td>
+                            <td class="p-2.5 text-stone-500 text-xs">${(item.splitWith || []).join(', ')}</td>
                             <td class="p-2.5 text-right space-x-1">
                                 <button class="px-2 py-1 text-xs bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg transition-all" onclick="editItem(${idx})">編輯</button>
                                 <button class="px-2 py-1 text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg transition-all" onclick="deleteItem(${idx})">刪除</button>
@@ -1700,10 +1799,13 @@
 
             items.forEach(item => {
                 if (paid[item.payer] !== undefined) paid[item.payer] += item.amount;
-                const splitAmount = item.amount / item.splitWith.length;
-                item.splitWith.forEach(f => {
-                    if (share[f] !== undefined) share[f] += splitAmount;
-                });
+                const splitWithList = item.splitWith || [];
+                if (splitWithList.length > 0) {
+                    const splitAmount = item.amount / splitWithList.length;
+                    splitWithList.forEach(f => {
+                        if (share[f] !== undefined) share[f] += splitAmount;
+                    });
+                }
             });
 
             const netBalances = {};
@@ -1747,6 +1849,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadPersonalItems();
             renderSplitApp();
+            updateFoodProgress();
+            updateGearProgress();
         });
     </script>
 </body>
