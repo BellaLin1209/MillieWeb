@@ -110,6 +110,9 @@
             <button onclick="switchTab('gearlist')" id="tab-gearlist" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
                 <i class="fa-solid fa-campground mr-1"></i> 營地裝備
             </button>
+            <button onclick="switchTab('split')" id="tab-split" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
+                <i class="fa-solid fa-calculator mr-1"></i> 分帳小工具
+            </button>
         </div>
     </nav>
 
@@ -1058,6 +1061,115 @@
 
         </section>
 
+        <!-- TAB 7: 分帳小工具 (SPLIT) -->
+        <section id="sec-split" class="hidden space-y-6">
+            
+            <!-- 成員設定 -->
+            <div class="bg-white rounded-2xl p-6 border border-stone-200 shadow-sm space-y-3">
+                <div class="flex items-center justify-between border-b pb-3">
+                    <h3 class="font-bold text-lg text-forest flex items-center">
+                        <i class="fa-solid fa-users text-emerald-600 mr-2"></i> 參與成員與家庭管理
+                    </h3>
+                    <span class="text-xs bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full font-bold">提醒:不會即時同步，僅存於本機端</span>
+                </div>
+                <p class="text-xs text-stone-500">此小工具僅為方便記錄計算，各項採買與墊付金額。資料儲存於本機瀏覽器中。</p>
+                <div class="flex gap-2">
+                    <input type="text" id="familyInput" placeholder="輸入成員名稱" class="flex-1 border border-stone-300 rounded-xl p-2.5 text-sm bg-stone-50 focus:outline-emerald-600">
+                    <button onclick="addFamily()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-sm transition-all shadow-sm shrink-0">
+                        <i class="fa-solid fa-user-plus mr-1"></i> 新增成員
+                    </button>
+                </div>
+                <div id="familyTags" class="flex gap-2 flex-wrap pt-2"></div>
+            </div>
+
+            <!-- 新增/編輯消費項目表單 -->
+            <div class="bg-white rounded-2xl p-6 border border-stone-200 shadow-sm space-y-4">
+                <h3 id="formTitle" class="font-bold text-lg text-forest flex items-center border-b pb-3">
+                    <i class="fa-solid fa-receipt text-amber-500 mr-2"></i> 新增消費項目
+                </h3>
+                <input type="hidden" id="editIndex" value="-1">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-stone-600 mb-1">品項名稱</label>
+                        <input type="text" id="itemName" placeholder="例如：全聯食材、飲料啤酒" class="w-full border border-stone-300 rounded-xl p-2.5 text-sm bg-stone-50 focus:outline-emerald-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-stone-600 mb-1">金額 (NTD)</label>
+                        <input type="number" id="itemAmount" placeholder="0" min="0" class="w-full border border-stone-300 rounded-xl p-2.5 text-sm bg-stone-50 focus:outline-emerald-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-stone-600 mb-1">付款人 (哪家墊付)</label>
+                        <select id="payerSelect" class="w-full border border-stone-300 rounded-xl p-2.5 text-sm bg-stone-50 focus:outline-emerald-600"></select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-stone-600 mb-1.5">分攤成員 (預設全員均分)</label>
+                    <div class="flex flex-wrap gap-3" id="splitGroup"></div>
+                </div>
+
+                <div class="flex gap-2 pt-2">
+                    <button onclick="saveItem()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-sm transition-all shadow-sm">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> 儲存項目
+                    </button>
+                    <button onclick="resetForm()" id="cancelEditBtn" class="hidden bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold px-4 py-2 rounded-xl text-sm transition-all border border-stone-200">
+                        取消編輯
+                    </button>
+                </div>
+            </div>
+
+            <!-- 購物明細清單 -->
+            <div class="bg-white rounded-2xl p-6 border border-stone-200 shadow-sm space-y-3">
+                <h3 class="font-bold text-lg text-forest flex items-center border-b pb-3">
+                    <i class="fa-solid fa-list-check text-blue-500 mr-2"></i> 購物明細清單
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs sm:text-sm text-left">
+                        <thead class="bg-stone-100 text-stone-600 font-bold">
+                            <tr>
+                                <th class="p-2.5 rounded-l-lg">品項</th>
+                                <th class="p-2.5">金額</th>
+                                <th class="p-2.5">墊付者</th>
+                                <th class="p-2.5">分攤對象</th>
+                                <th class="p-2.5 rounded-r-lg text-right">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsTableBody" class="divide-y divide-stone-100"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 各家收支總結 -->
+            <div class="bg-white rounded-2xl p-6 border border-stone-200 shadow-sm space-y-3">
+                <h3 class="font-bold text-lg text-forest flex items-center border-b pb-3">
+                    <i class="fa-solid fa-scale-balanced text-teal-600 mr-2"></i> 各家收支總結
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs sm:text-sm text-left">
+                        <thead class="bg-stone-100 text-stone-600 font-bold">
+                            <tr>
+                                <th class="p-2.5 rounded-l-lg">家庭 / 成員</th>
+                                <th class="p-2.5">總墊付金額</th>
+                                <th class="p-2.5">應分攤金額</th>
+                                <th class="p-2.5 rounded-r-lg">淨收支 (應收 / 應付)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summaryTableBody" class="divide-y divide-stone-100"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 最終結清轉帳建議 -->
+            <div class="bg-white rounded-2xl p-6 border border-stone-200 shadow-sm space-y-3">
+                <h3 class="font-bold text-lg text-forest flex items-center border-b pb-3">
+                    <i class="fa-solid fa-money-bill-transfer text-emerald-600 mr-2"></i> 最終結清方案 (誰該給誰多少錢)
+                </h3>
+                <div id="settlementList" class="space-y-2.5"></div>
+            </div>
+
+        </section>
+
     </main>
 
     <!-- Modal for Adding/Editing Item -->
@@ -1089,7 +1201,7 @@
 
             <div class="flex justify-end space-x-2 mt-6">
                 <button onclick="closeModal()" class="px-4 py-2 text-stone-500 hover:text-stone-700 text-sm font-medium">取消</button>
-                <button onclick="saveItem()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition-all">儲存項目</button>
+                <button onclick="savePersonalModalItem()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition-all">儲存項目</button>
             </div>
         </div>
     </div>
@@ -1103,7 +1215,7 @@
     <script>
         // TAB SWITCHING LOGIC
         function switchTab(tabName) {
-            const sections = ['info', 'schedule', 'menu', 'personal', 'foodlist', 'gearlist'];
+            const sections = ['info', 'schedule', 'menu', 'personal', 'foodlist', 'gearlist', 'split'];
             sections.forEach(s => {
                 const el = document.getElementById('sec-' + s);
                 const btn = document.getElementById('tab-' + s);
@@ -1165,7 +1277,7 @@
             renderPersonalItems();
         }
 
-        function saveToStorage() {
+        function savePersonalToStorage() {
             localStorage.setItem('blue_magpie_personal_items_v2', JSON.stringify(personalItems));
             updatePersonalProgress();
         }
@@ -1218,7 +1330,7 @@
                             <button onclick="openEditModal(${item.id})" title="編輯" class="text-stone-400 hover:text-emerald-600 p-1.5 rounded-lg hover:bg-emerald-50 text-xs">
                                 <i class="fa-solid fa-pen"></i>
                             </button>
-                            <button onclick="deleteItem(${item.id})" title="刪除" class="text-stone-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 text-xs">
+                            <button onclick="deletePersonalItem(${item.id})" title="刪除" class="text-stone-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 text-xs">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
@@ -1247,7 +1359,7 @@
             const item = personalItems.find(i => i.id === id);
             if (item) {
                 item.checked = !item.checked;
-                saveToStorage();
+                savePersonalToStorage();
             }
         }
 
@@ -1255,14 +1367,14 @@
             const item = personalItems.find(i => i.id === id);
             if (item && value.trim() !== '') {
                 item[field] = value.trim();
-                saveToStorage();
+                savePersonalToStorage();
             }
         }
 
-        function deleteItem(id) {
+        function deletePersonalItem(id) {
             if (confirm("確定要刪除這個用品項目嗎？")) {
                 personalItems = personalItems.filter(i => i.id !== id);
-                saveToStorage();
+                savePersonalToStorage();
                 renderPersonalItems();
             }
         }
@@ -1290,7 +1402,7 @@
             document.getElementById('item-modal').classList.add('hidden');
         }
 
-        function saveItem() {
+        function savePersonalModalItem() {
             const cat = document.getElementById('input-category').value;
             const name = document.getElementById('input-name').value.trim();
             const qty = document.getElementById('input-qty').value.trim() || '1 個';
@@ -1318,7 +1430,7 @@
                 });
             }
 
-            saveToStorage();
+            savePersonalToStorage();
             renderPersonalItems();
             closeModal();
         }
@@ -1326,7 +1438,7 @@
         function resetPersonalItems() {
             if (confirm("確定要將個人用品清單重設為預設值嗎？")) {
                 personalItems = JSON.parse(JSON.stringify(DEFAULT_PERSONAL_ITEMS));
-                saveToStorage();
+                savePersonalToStorage();
                 renderPersonalItems();
             }
         }
@@ -1366,9 +1478,231 @@
             document.getElementById('gear-progress-percent').innerText = percent + '%';
         }
 
+        // ==========================================
+        // 分帳小工具 LOGIC (SHARE / SPLIT CALC)
+        // ==========================================
+        let families = JSON.parse(localStorage.getItem('split_families')) || ['萬萬', '星星', '周周'];
+        let items = JSON.parse(localStorage.getItem('split_items')) || [];
+
+        function saveSplitData() {
+            localStorage.setItem('split_families', JSON.stringify(families));
+            localStorage.setItem('split_items', JSON.stringify(items));
+            renderSplitApp();
+        }
+
+        function addFamily() {
+            const input = document.getElementById('familyInput');
+            const name = input.value.trim();
+            if (name && !families.includes(name)) {
+                families.push(name);
+                input.value = '';
+                saveSplitData();
+            }
+        }
+
+        function removeFamily(name) {
+            if (confirm(`確定要移除「${name}」嗎？相關分攤可能需要重新檢查。`)) {
+                families = families.filter(f => f !== name);
+                items = items.map(item => ({
+                    ...item,
+                    splitWith: item.splitWith.filter(f => f !== name)
+                })).filter(item => item.payer !== name);
+                saveSplitData();
+            }
+        }
+
+        function saveItem() {
+            const editIndex = parseInt(document.getElementById('editIndex').value, 10);
+            const name = document.getElementById('itemName').value.trim();
+            const amount = parseFloat(document.getElementById('itemAmount').value);
+            const payer = document.getElementById('payerSelect').value;
+            
+            const checkboxes = document.querySelectorAll('#splitGroup input[type="checkbox"]:checked');
+            const splitWith = Array.from(checkboxes).map(cb => cb.value);
+
+            if (!name || isNaN(amount) || amount <= 0 || !payer || splitWith.length === 0) {
+                alert('請填寫完整且正確的品項名稱、金額、墊付者及至少一位分攤對象！');
+                return;
+            }
+
+            const payload = { name, amount, payer, splitWith };
+
+            if (editIndex >= 0) {
+                items[editIndex] = payload;
+            } else {
+                items.push(payload);
+            }
+
+            resetForm();
+            saveSplitData();
+        }
+
+        function editItem(index) {
+            const item = items[index];
+            document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-pen-to-square text-amber-500 mr-2"></i> 編輯消費項目';
+            document.getElementById('editIndex').value = index;
+            document.getElementById('itemName').value = item.name;
+            document.getElementById('itemAmount').value = item.amount;
+            document.getElementById('payerSelect').value = item.payer;
+            document.getElementById('cancelEditBtn').classList.remove('hidden');
+
+            document.querySelectorAll('#splitGroup input[type="checkbox"]').forEach(cb => {
+                cb.checked = item.splitWith.includes(cb.value);
+            });
+        }
+
+        function deleteItem(index) {
+            if (confirm('確定刪除此消費項目？')) {
+                items.splice(index, 1);
+                saveSplitData();
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-receipt text-amber-500 mr-2"></i> 新增消費項目';
+            document.getElementById('editIndex').value = -1;
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemAmount').value = '';
+            document.getElementById('cancelEditBtn').classList.add('hidden');
+            document.querySelectorAll('#splitGroup input[type="checkbox"]').forEach(cb => cb.checked = true);
+        }
+
+        function calculateSettlements(balances) {
+            let debtors = [];
+            let creditors = [];
+
+            for (const [family, amount] of Object.entries(balances)) {
+                const rounded = Math.round(amount);
+                if (rounded < -0.01) debtors.push({ family, amount: -rounded });
+                else if (rounded > 0.01) creditors.push({ family, amount: rounded });
+            }
+
+            debtors.sort((a, b) => b.amount - a.amount);
+            creditors.sort((a, b) => b.amount - a.amount);
+
+            const transactions = [];
+            let i = 0, j = 0;
+
+            while (i < debtors.length && j < creditors.length) {
+                const settleAmount = Math.min(debtors[i].amount, creditors[j].amount);
+                transactions.push({
+                    from: debtors[i].family,
+                    to: creditors[j].family,
+                    amount: settleAmount
+                });
+
+                debtors[i].amount -= settleAmount;
+                creditors[j].amount -= settleAmount;
+
+                if (debtors[i].amount < 1) i++;
+                if (creditors[j].amount < 1) j++;
+            }
+
+            return transactions;
+        }
+
+        function renderSplitApp() {
+            // 家庭標籤
+            const familyTags = document.getElementById('familyTags');
+            if (familyTags) {
+                familyTags.innerHTML = families.map(f => `
+                    <span class="inline-flex items-center gap-1.5 bg-stone-100 text-stone-700 px-3 py-1 rounded-lg text-xs font-bold border border-stone-200">
+                        ${f} <button onclick="removeFamily('${f}')" class="text-stone-400 hover:text-rose-600 font-bold ml-1">✕</button>
+                    </span>
+                `).join('');
+            }
+
+            // 付款下拉選單
+            const payerSelect = document.getElementById('payerSelect');
+            if (payerSelect) {
+                payerSelect.innerHTML = families.map(f => `<option value="${f}">${f}</option>`).join('');
+            }
+
+            // 分攤 Checkboxes
+            const splitGroup = document.getElementById('splitGroup');
+            if (splitGroup) {
+                splitGroup.innerHTML = families.map(f => `
+                    <label class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-stone-700 cursor-pointer bg-stone-50 px-2.5 py-1.5 rounded-lg border border-stone-200">
+                        <input type="checkbox" value="${f}" checked class="rounded text-emerald-600"> ${f}
+                    </label>
+                `).join('');
+            }
+
+            // 明細清單
+            const itemsTableBody = document.getElementById('itemsTableBody');
+            if (itemsTableBody) {
+                if (items.length === 0) {
+                    itemsTableBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-stone-400 text-xs">尚無任何消費項目，請於上方表單新增！</td></tr>`;
+                } else {
+                    itemsTableBody.innerHTML = items.map((item, idx) => `
+                        <tr class="hover:bg-stone-50">
+                            <td class="p-2.5 font-bold text-stone-800">${item.name}</td>
+                            <td class="p-2.5 text-emerald-700 font-bold">$${item.amount.toLocaleString()}</td>
+                            <td class="p-2.5"><span class="badge-pill bg-blue-100 text-blue-800">${item.payer}</span></td>
+                            <td class="p-2.5 text-stone-500 text-xs">${item.splitWith.join(', ')}</td>
+                            <td class="p-2.5 text-right space-x-1">
+                                <button class="px-2 py-1 text-xs bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg transition-all" onclick="editItem(${idx})">編輯</button>
+                                <button class="px-2 py-1 text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg transition-all" onclick="deleteItem(${idx})">刪除</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            }
+
+            // 計算收支統計
+            const paid = {};
+            const share = {};
+            families.forEach(f => { paid[f] = 0; share[f] = 0; });
+
+            items.forEach(item => {
+                if (paid[item.payer] !== undefined) paid[item.payer] += item.amount;
+                const splitAmount = item.amount / item.splitWith.length;
+                item.splitWith.forEach(f => {
+                    if (share[f] !== undefined) share[f] += splitAmount;
+                });
+            });
+
+            const netBalances = {};
+            const summaryTableBody = document.getElementById('summaryTableBody');
+            if (summaryTableBody) {
+                summaryTableBody.innerHTML = families.map(f => {
+                    const net = paid[f] - share[f];
+                    netBalances[f] = net;
+                    const badgeClass = net > 0 ? 'bg-emerald-100 text-emerald-800' : (net < 0 ? 'bg-rose-100 text-rose-800' : 'bg-stone-100 text-stone-600');
+                    const netText = net > 0 ? `應收 +$${Math.round(net).toLocaleString()}` : (net < 0 ? `應付 -$${Math.round(Math.abs(net)).toLocaleString()}` : '$0');
+                    
+                    return `
+                        <tr class="hover:bg-stone-50">
+                            <td class="p-2.5 font-bold text-stone-800">${f}</td>
+                            <td class="p-2.5 text-stone-600">$${Math.round(paid[f]).toLocaleString()}</td>
+                            <td class="p-2.5 text-stone-600">$${Math.round(share[f]).toLocaleString()}</td>
+                            <td class="p-2.5"><span class="badge-pill font-bold ${badgeClass}">${netText}</span></td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            // 渲染最終結算方案
+            const settlements = calculateSettlements(netBalances);
+            const settlementList = document.getElementById('settlementList');
+            if (settlementList) {
+                if (settlements.length === 0) {
+                    settlementList.innerHTML = `<div class="p-4 bg-stone-50 rounded-xl text-center text-xs text-stone-500">🎉 目前各家帳目已平衡，無須轉帳。</div>`;
+                } else {
+                    settlementList.innerHTML = settlements.map(s => `
+                        <div class="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3.5 flex justify-between items-center text-xs sm:text-sm">
+                            <span class="text-emerald-950 font-medium"><i class="fa-solid fa-credit-card mr-1.5 text-emerald-600"></i> <strong>${s.from}</strong> 應支付給 <strong>${s.to}</strong></span>
+                            <span class="text-emerald-800 font-black text-sm sm:text-base">$${s.amount.toLocaleString()} 元</span>
+                        </div>
+                    `).join('');
+                }
+            }
+        }
+
         // Initialize on DOM loaded
         document.addEventListener('DOMContentLoaded', () => {
             loadPersonalItems();
+            renderSplitApp();
         });
     </script>
 </body>
