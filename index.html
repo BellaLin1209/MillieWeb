@@ -140,28 +140,34 @@
 
     <!-- Main Navigation Bar -->
     <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-stone-200 shadow-sm">
-        <div class="max-w-4xl mx-auto flex overflow-x-auto no-scrollbar justify-start sm:justify-around p-2 text-xs sm:text-sm font-medium text-stone-600 gap-1 sm:gap-2">
-            <button onclick="switchTab('info')" id="tab-info" class="tab-btn active shrink-0 px-3 py-2 rounded-lg transition-all">
-                <i class="fa-solid fa-circle-info mr-1"></i> 行前概覽
-            </button>
-            <button onclick="switchTab('schedule')" id="tab-schedule" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
-                <i class="fa-solid fa-calendar-days mr-1"></i> 行程安排
-            </button>
-            <button onclick="switchTab('menu')" id="tab-menu" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
-                <i class="fa-solid fa-utensils mr-1"></i> 晚餐 Menu
-            </button>
-            <button onclick="switchTab('personal')" id="tab-personal" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
-                <i class="fa-solid fa-suitcase-rolling mr-1"></i> 個人用品
-            </button>
-            <button onclick="switchTab('foodlist')" id="tab-foodlist" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
-                <i class="fa-solid fa-basket-shopping mr-1"></i> 食材清單 <span class="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.5 rounded-full font-bold ml-0.5">即時</span>
-            </button>
-            <button onclick="switchTab('gearlist')" id="tab-gearlist" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
-                <i class="fa-solid fa-campground mr-1"></i> 營地裝備 <span class="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.5 rounded-full font-bold ml-0.5">即時</span>
-            </button>
-            <button onclick="switchTab('split')" id="tab-split" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
-                <i class="fa-solid fa-calculator mr-1"></i> 分帳小工具 <span class="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.5 rounded-full font-bold ml-0.5">即時</span>
-            </button>
+        <div class="max-w-4xl mx-auto relative">
+            <div id="main-nav-scroll" class="flex overflow-x-auto no-scrollbar justify-start sm:justify-around p-2 text-xs sm:text-sm font-medium text-stone-600 gap-1 sm:gap-2">
+                <button onclick="switchTab('info')" id="tab-info" class="tab-btn active shrink-0 px-3 py-2 rounded-lg transition-all">
+                    <i class="fa-solid fa-circle-info mr-1"></i> 行前概覽
+                </button>
+                <button onclick="switchTab('schedule')" id="tab-schedule" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
+                    <i class="fa-solid fa-calendar-days mr-1"></i> 行程安排
+                </button>
+                <button onclick="switchTab('menu')" id="tab-menu" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
+                    <i class="fa-solid fa-utensils mr-1"></i> 晚餐 Menu
+                </button>
+                <button onclick="switchTab('personal')" id="tab-personal" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
+                    <i class="fa-solid fa-suitcase-rolling mr-1"></i> 個人用品
+                </button>
+                <button onclick="switchTab('foodlist')" id="tab-foodlist" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
+                    <i class="fa-solid fa-basket-shopping mr-1"></i> 食材清單 <span class="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.5 rounded-full font-bold ml-0.5">即時</span>
+                </button>
+                <button onclick="switchTab('gearlist')" id="tab-gearlist" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
+                    <i class="fa-solid fa-campground mr-1"></i> 營地裝備 <span class="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.5 rounded-full font-bold ml-0.5">即時</span>
+                </button>
+                <button onclick="switchTab('split')" id="tab-split" class="tab-btn shrink-0 px-3 py-2 rounded-lg transition-all">
+                    <i class="fa-solid fa-calculator mr-1"></i> 分帳小工具 <span class="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.5 rounded-full font-bold ml-0.5">即時</span>
+                </button>
+            </div>
+            <div id="nav-fade-left" class="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-white to-transparent opacity-0 transition-opacity duration-200"></div>
+            <div id="nav-fade-right" class="pointer-events-none absolute inset-y-0 right-0 w-8 flex items-center justify-end bg-gradient-to-l from-white to-transparent opacity-0 transition-opacity duration-200">
+                <i class="fa-solid fa-chevron-right text-stone-400 text-xs animate-pulse mr-0.5"></i>
+            </div>
         </div>
     </nav>
 
@@ -1082,6 +1088,26 @@
             if(targetEl) targetEl.classList.remove('hidden');
             if(targetBtn) targetBtn.classList.add('active');
         }
+
+        // NAV BAR SCROLL HINT (fade edges show when there's more to scroll)
+        function updateNavFades() {
+            const scrollEl = document.getElementById('main-nav-scroll');
+            const fadeLeft = document.getElementById('nav-fade-left');
+            const fadeRight = document.getElementById('nav-fade-right');
+            if (!scrollEl || !fadeLeft || !fadeRight) return;
+            const maxScroll = scrollEl.scrollWidth - scrollEl.clientWidth;
+            fadeLeft.style.opacity = scrollEl.scrollLeft > 4 ? '1' : '0';
+            fadeRight.style.opacity = scrollEl.scrollLeft < maxScroll - 4 ? '1' : '0';
+        }
+
+        (function initNavFades() {
+            const scrollEl = document.getElementById('main-nav-scroll');
+            if (!scrollEl) return;
+            scrollEl.addEventListener('scroll', updateNavFades);
+            window.addEventListener('resize', updateNavFades);
+            window.addEventListener('load', updateNavFades);
+            updateNavFades();
+        })();
 
         // ==========================================
         // FIREBASE REALTIME SYNC HANDLERS
