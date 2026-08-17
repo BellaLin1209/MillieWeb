@@ -1781,7 +1781,7 @@
                     itemsTableBody.innerHTML = items.map((item, idx) => `
                         <tr class="hover:bg-stone-50">
                             <td class="p-2.5 font-bold text-stone-800">${item.name}</td>
-                            <td class="p-2.5 text-emerald-700 font-bold">$${item.amount.toLocaleString()}</td>
+                            <td class="p-2.5 text-emerald-700 font-bold">$${Math.round(item.amount).toLocaleString()}</td>
                             <td class="p-2.5"><span class="badge-pill bg-blue-100 text-blue-800">${item.payer}</span></td>
                             <td class="p-2.5 text-stone-500 text-xs">${(item.splitWith || []).join(', ')}</td>
                             <td class="p-2.5 text-right space-x-1">
@@ -1793,22 +1793,66 @@
                 }
             }
 
-            // 計算收支統計
+            // 1. 先計算各家墊付總額與群組分攤總計
             const paid = {};
             const share = {};
             families.forEach(f => { paid[f] = 0; share[f] = 0; });
 
+            // 依「分攤群組」與「墊付者」將各品項加總
+            const groupTotals = {};
+
             items.forEach(item => {
-                if (paid[item.payer] !== undefined) paid[item.payer] += item.amount;
-                const splitWithList = item.splitWith || [];
-                if (splitWithList.length > 0) {
-                    const splitAmount = item.amount / splitWithList.length;
-                    splitWithList.forEach(f => {
-                        if (share[f] !== undefined) share[f] += splitAmount;
+                const amt = Math.round(item.amount);
+                if (paid[item.payer] !== undefined) {
+                    paid[item.payer] += amt;
+                }
+
+                const splitWithList = (item.splitWith || []).slice().sort();
+                if (splitWithList.length === 0) return;
+
+                const groupKey = `${item.payer}__${splitWithList.join('|')}`;
+                if (!groupTotals[groupKey]) {
+                    groupTotals[groupKey] = {
+                        payer: item.payer,
+                        splitWith: splitWithList,
+                        totalAmount: 0
+                    };
+                }
+                groupTotals[groupKey].totalAmount += amt;
+            });
+
+            // 2. 針對總計後的金額進行分除與優惠墊付者計算
+            Object.values(groupTotals).forEach(group => {
+                const totalAmt = group.totalAmount;
+                const n = group.splitWith.length;
+                if (n === 0 || totalAmt === 0) return;
+
+                const isPayerInSplit = group.splitWith.includes(group.payer);
+
+                if (isPayerInSplit && n > 1) {
+                    // 總額分除：其他人無條件進位，墊付者享受扣減餘額優惠
+                    const othersShare = Math.ceil(totalAmt / n);
+                    const payerShare = totalAmt - (othersShare * (n - 1));
+
+                    group.splitWith.forEach(member => {
+                        if (share[member] !== undefined) {
+                            share[member] += (member === group.payer) ? payerShare : othersShare;
+                        }
+                    });
+                } else {
+                    // 墊付者不在分攤名單內時，餘數依序分攤
+                    const baseShare = Math.floor(totalAmt / n);
+                    const remainder = totalAmt % n;
+
+                    group.splitWith.forEach((member, idx) => {
+                        if (share[member] !== undefined) {
+                            share[member] += baseShare + (idx < remainder ? 1 : 0);
+                        }
                     });
                 }
             });
 
+            // 3. 渲染各家收支總結
             const netBalances = {};
             const summaryTableBody = document.getElementById('summaryTableBody');
             if (summaryTableBody) {
@@ -1816,20 +1860,20 @@
                     const net = paid[f] - share[f];
                     netBalances[f] = net;
                     const badgeClass = net > 0 ? 'bg-emerald-100 text-emerald-800' : (net < 0 ? 'bg-rose-100 text-rose-800' : 'bg-stone-100 text-stone-600');
-                    const netText = net > 0 ? `應收 +$${Math.round(net).toLocaleString()}` : (net < 0 ? `應付 -$${Math.round(Math.abs(net)).toLocaleString()}` : '$0');
+                    const netText = net > 0 ? `應收 +$${net.toLocaleString()}` : (net < 0 ? `應付 -$${Math.abs(net).toLocaleString()}` : '$0');
                     
                     return `
                         <tr class="hover:bg-stone-50">
                             <td class="p-2.5 font-bold text-stone-800">${f}</td>
-                            <td class="p-2.5 text-stone-600">$${Math.round(paid[f]).toLocaleString()}</td>
-                            <td class="p-2.5 text-stone-600">$${Math.round(share[f]).toLocaleString()}</td>
+                            <td class="p-2.5 text-stone-600">$${paid[f].toLocaleString()}</td>
+                            <td class="p-2.5 text-stone-600">$${share[f].toLocaleString()}</td>
                             <td class="p-2.5"><span class="badge-pill font-bold ${badgeClass}">${netText}</span></td>
                         </tr>
                     `;
                 }).join('');
             }
 
-            // 渲染最終結算方案
+            // 4. 渲染最終結算方案
             const settlements = calculateSettlements(netBalances);
             const settlementList = document.getElementById('settlementList');
             if (settlementList) {
@@ -1845,7 +1889,6 @@
                 }
             }
         }
-
         // Initialize on DOM loaded
         document.addEventListener('DOMContentLoaded', () => {
             loadPersonalItems();
